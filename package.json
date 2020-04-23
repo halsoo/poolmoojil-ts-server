@@ -1,0 +1,50 @@
+{
+    "name": "poolmoojil",
+    "version": "0.0.1",
+    "description": "a web site and a E-store for the bookstore Poolmoojil",
+    "main": "app.js",
+    "repository": "https://github.com/halsoo/poolmoojil.git",
+    "author": "SakeMin, UKGU",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "@types/koa-send": "^4.1.2",
+        "axios": "^0.19.2",
+        "class-validator": "^0.11.1",
+        "http-status": "^1.4.2",
+        "koa": "^2.11.0",
+        "koa-bodyparser": "^4.3.0",
+        "koa-cors": "^0.0.16",
+        "koa-logger": "^3.2.1",
+        "koa-mount": "^4.0.0",
+        "koa-router": "^8.0.8",
+        "koa-send": "^5.0.0",
+        "koa-static": "^5.0.0",
+        "pg": "^8.0.0",
+        "typeorm": "^0.2.24"
+    },
+    "devDependencies": {
+        "@types/koa": "^2.11.3",
+        "@types/koa-bodyparser": "^4.3.0",
+        "@types/koa-cors": "^0.0.0",
+        "@types/koa-logger": "^3.1.1",
+        "@types/koa-mount": "^4.0.0",
+        "@types/koa-router": "^7.4.0",
+        "@types/koa-static": "^4.0.1",
+        "@types/node": "^13.9.5",
+        "concurrently": "^5.1.0",
+        "create-react-app": "^3.4.1",
+        "nodemon": "^2.0.2",
+        "prettier": "^2.0.2",
+        "ts-node": "^8.8.1",
+        "tsconfig-paths": "^3.9.0",
+        "typescript": "^3.8.3"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "watch-start": "concurrently --kill-others \"tsc --watch\" \"nodemon dist/app.js\"",
+        "start": "node dist/app.js",
+        "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    }
+}
