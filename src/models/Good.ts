@@ -46,4 +46,10 @@ export class Good {
     @OneToOne((type) => Image, { nullable: true })
     @JoinColumn()
     additionalImg: Image;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }

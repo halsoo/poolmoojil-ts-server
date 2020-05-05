@@ -36,7 +36,7 @@ export class Package {
     @JoinColumn()
     additionalImg: Image;
 
-    @Column('date', { nullable: true })
+    @Column('daterange', { nullable: true })
     date: Date;
 
     @CreateDateColumn()

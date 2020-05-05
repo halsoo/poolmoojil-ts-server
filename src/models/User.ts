@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     OneToMany,
     ManyToMany,
+    Unique,
 } from 'typeorm';
 
 import { Length, IsEmail } from 'class-validator';
@@ -17,9 +18,14 @@ import { GatheringSubsc } from './GatheringSubsc';
 import { GatheringHistory } from './GatheringHistory';
 
 @Entity('users')
+@Unique(['userID'])
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    @Column('text', { name: 'userID' })
+    @Length(5, 20)
+    userID: string;
 
     @Column('text')
     name: string;
@@ -51,22 +57,13 @@ export class User {
     @ManyToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.users)
     packageSubcs: PackageSubsc[];
 
-    @OneToMany(
-        (type) => PackageHistory,
-        (packageHistory) => packageHistory.user,
-    )
+    @OneToMany((type) => PackageHistory, (packageHistory) => packageHistory.user)
     packageHistories: PackageHistory[];
 
-    @ManyToMany(
-        (type) => GatheringSubsc,
-        (gatheringSubsc) => gatheringSubsc.users,
-    )
+    @ManyToMany((type) => GatheringSubsc, (gatheringSubsc) => gatheringSubsc.users)
     gatheringSubscs: GatheringSubsc[];
 
-    @OneToMany(
-        (type) => GatheringHistory,
-        (gatheringHistory) => gatheringHistory.user,
-    )
+    @OneToMany((type) => GatheringHistory, (gatheringHistory) => gatheringHistory.user)
     gatheringHistories: GatheringHistory[];
 
     @CreateDateColumn()

@@ -26,7 +26,7 @@ export class GatheringSubsc {
     @JoinTable()
     users: User[];
 
-    @Column('date', { nullable: true })
+    @Column('daterange', { nullable: true })
     gatheringPeriod: Date;
 
     @CreateDateColumn()

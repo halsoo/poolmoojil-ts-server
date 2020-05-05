@@ -2,11 +2,14 @@ import Router from 'koa-router';
 import createTestData = require('../qa/createTestData');
 
 import { getConnection, Connection } from 'typeorm';
+
+import { LogRouter } from './log-router';
+
 import { Book } from '../models/Book';
 import { Gathering } from '../models/Gathering';
+import { About } from '../models/About';
+import { Place } from '../models/Place';
 
-const axios = require('axios');
-const queryString = require('querystring');
 const HttpStatus = require('http-status');
 
 export const apiRouter = new Router();
@@ -14,6 +17,8 @@ export const apiRouter = new Router();
 apiRouter.get('/', (ctx, next) => {
     ctx.body = 'api';
 });
+
+apiRouter.use('/users', LogRouter.routes());
 
 apiRouter.get('/books', async (ctx, next) => {
     try {
@@ -58,21 +63,16 @@ apiRouter.get('/store', async (ctx, next) => {
     await next();
 });
 
-apiRouter.get('/maps', async (ctx, next) => {
-    const mapRequest = axios.create({
-        baseURL: 'https://naveropenapi.apigw.ntruss.com/map-geocode',
-        timeout: 1000,
-        headers: {
-            'X-NCP-APIGW-API-KEY-ID': 'n8zu7htxmz',
-            'X-NCP-APIGW-API-KEY': 'u7Vvq1iFYzyORjHnN4AY8gYJbXfOHIDji4iRAHmX',
-        },
-    });
-
+apiRouter.get('/aboutTexts', async (ctx, next) => {
     try {
-        const centerData = await mapRequest.get(
-            '/v2/geocode?' + queryString.stringify({ query: '종로구 성균관로 19 지하' }),
-        );
-        ctx.body = [{ lng: centerData.data.addresses[0].x, lat: centerData.data.addresses[0].y }];
+        const aboutTexts = await getConnection()
+            .createQueryBuilder()
+            .select('abouts')
+            .from(About, 'abouts')
+            .where('abouts.isShow = :value', { value: true })
+            .getMany();
+
+        ctx.body = aboutTexts;
     } catch (err) {
         ctx.status = err.statusCode || err.status || 500;
         ctx.body = {
@@ -82,7 +82,28 @@ apiRouter.get('/maps', async (ctx, next) => {
     await next();
 });
 
-apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
-apiRouter.post('/books', createTestData.TestData.createTestBooks);
+apiRouter.get('/places', async (ctx, next) => {
+    try {
+        const places = await getConnection()
+            .createQueryBuilder()
+            .select('places')
+            .from(Place, 'places')
+            .getMany();
 
-apiRouter.post('/users', createTestData.TestData.createTestUsers);
+        ctx.body = places;
+    } catch (err) {
+        ctx.status = err.statusCode || err.status || 500;
+        ctx.body = {
+            message: err.message,
+        };
+    }
+    await next();
+});
+
+// apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
+// apiRouter.post('/books', createTestData.TestData.createTestBooks);
+
+apiRouter.post('/user', createTestData.TestData.createTestUsers);
+
+// apiRouter.post('/places', createTestData.TestData.createPlaces);
+// apiRouter.post('/aboutTexts', createTestData.TestData.createAboutTexts);

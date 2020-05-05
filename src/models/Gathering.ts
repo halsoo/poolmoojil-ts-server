@@ -7,10 +7,12 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
+    ManyToOne,
 } from 'typeorm';
 
 import { Book } from './Book';
 import { Image } from './Image';
+import { Place } from './Place';
 
 @Entity('gatherings')
 export class Gathering {
@@ -26,6 +28,12 @@ export class Gathering {
 
     @Column('tsrange')
     date: Date;
+
+    @ManyToOne((type) => Place, (place) => place.gatherings)
+    place: Place;
+
+    @Column('text', { nullable: true })
+    category: string;
 
     @Column('text', { nullable: true })
     format: string;

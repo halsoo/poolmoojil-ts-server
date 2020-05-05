@@ -24,7 +24,7 @@ export class PackageHistory {
     @ManyToOne((type) => User, (user) => user.packageHistories)
     user: User;
 
-    @Column('date', { nullable: true })
+    @Column('timestamp', { nullable: true })
     purchaseDate: Date;
 
     @CreateDateColumn()

@@ -26,7 +26,7 @@ export class PackageSubsc {
     @JoinTable()
     users: User[];
 
-    @Column('date', { nullable: true })
+    @Column('daterange', { nullable: true })
     packagePeriod: Date;
 
     @CreateDateColumn()

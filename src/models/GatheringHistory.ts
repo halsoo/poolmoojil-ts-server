@@ -29,7 +29,7 @@ export class GatheringHistory {
     @Max(3)
     headCount: number;
 
-    @Column('date')
+    @Column('timestamp')
     purchaseDate: Date;
 
     @CreateDateColumn()
