@@ -27,19 +27,10 @@ export class Address {
     zip: string;
 
     @Column('text', { nullable: true })
-    district: string;
+    addressA: string;
 
     @Column('text', { nullable: true })
-    city: string;
-
-    @Column('text', { nullable: true })
-    town: string;
-
-    @Column('text', { nullable: true })
-    street: string;
-
-    @Column('text', { nullable: true })
-    home: string;
+    addressB: string;
 
     @CreateDateColumn()
     createdAt: Date;

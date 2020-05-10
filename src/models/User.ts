@@ -43,7 +43,7 @@ export class User {
     phone: string;
 
     @Column('date', { nullable: true })
-    birth: Date;
+    birth: string;
 
     @Column('text', { nullable: true })
     gender: string;

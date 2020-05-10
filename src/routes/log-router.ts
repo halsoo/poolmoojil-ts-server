@@ -9,4 +9,5 @@ LogRouter.put('/:id', UserController.updateUser); //Update a single user that ma
 LogRouter.delete('/:id', UserController.deleteUser);
 
 LogRouter.post('/login', UserController.logIn);
+LogRouter.post('/logout', UserController.logOut);
 LogRouter.post('/register', UserController.createUser); //Create a single user in the database

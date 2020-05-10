@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 import createTestData = require('../qa/createTestData');
 
-import { getConnection, Connection } from 'typeorm';
+import { getConnection, Connection, AdvancedConsoleLogger } from 'typeorm';
 
 import { LogRouter } from './log-router';
 
@@ -21,19 +21,21 @@ apiRouter.get('/', (ctx, next) => {
 apiRouter.use('/users', LogRouter.routes());
 
 apiRouter.get('/books', async (ctx, next) => {
-    try {
-        const books = await getConnection()
-            .createQueryBuilder()
-            .select('books')
-            .from(Book, 'books')
-            .getMany();
+    if (ctx.request.user) {
+        try {
+            const books = await getConnection()
+                .createQueryBuilder()
+                .select('books')
+                .from(Book, 'books')
+                .getMany();
 
-        ctx.body = books;
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
+            ctx.body = books;
+        } catch (err) {
+            ctx.status = err.statusCode || err.status || 500;
+            ctx.body = {
+                message: err.message,
+            };
+        }
     }
     await next();
 });

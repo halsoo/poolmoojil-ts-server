@@ -9,7 +9,7 @@ const path = require('path');
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
-const cors = require('koa-cors');
+const cors = require('@koa/cors');
 const koaStatic = require('koa-static');
 const mount = require('koa-mount');
 
@@ -30,7 +30,11 @@ app.use(mount('/', staticPages));
 
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+const corsOptions = {
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser());
 
 app.use(jwtMiddleware);

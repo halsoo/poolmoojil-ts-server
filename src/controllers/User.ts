@@ -1,10 +1,12 @@
 const SECRET = process.env.SECRET_KEY;
 import { BaseContext } from 'koa';
+const Cookies = require('cookies');
 import bcrypt from 'bcrypt';
 import { getManager, Repository, Not, Equal } from 'typeorm';
 import { validate, ValidationError } from 'class-validator';
 import { generateToken } from '../lib/token';
-import { User } from '../models/User';
+import { User } from '../models/User'; 
+import {Address} from '../models/Address';
 
 export default class UserController {
     public static async token(User: User) {
@@ -31,54 +33,62 @@ export default class UserController {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
-        const user: User = await userRepository.findOne({ userID: ctx.params.id });
+        const user[]: User = await userRepository.findOne({ userID: ctx.params.id });
         if (user) {
             // return OK status code and loaded user object
-            ctx.status = 200;
-            ctx.body = user;
+            ctx.status = 208;
         } else {
             // return a BAD REQUEST status code and error message
-            ctx.status = 400;
-            ctx.body = "The user you are trying to retrieve doesn't exist in the db";
+            ctx.status = 200;
         }
     }
     public static async createUser(ctx: BaseContext) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
-
+        const addressRepository: Repository<Address> = getManager().getRepository(Address);
         // build up entity user to be saved
         const newUser: User = new User();
+        const newAddress: Address = new Address();
 
         newUser.userID = ctx.request.body.userID;
         newUser.name = ctx.request.body.name;
         newUser.email = ctx.request.body.email;
+        newUser.phone = ctx.request.body.phone;
+        newUser.birth = ctx.request.body.birth;
         newUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, SECRET);
+
+        newAddress.user = newUser;
+        newAddress.name = '기본';
+        newAddress.zip = ctx.request.body.zipCode;
+        newAddress.addressA = ctx.request.body.addressA;
+        newAddress.addressB = ctx.request.body.addressB;
         //validate(ctx.request.body.name);
         // validate user entity
-        const errors: ValidationError[] = await validate(newUser, { skipMissingProperties: true }); // errors is an array of validation errors
-        if (errors.length > 0) {
+        const UserErrors: ValidationError[] = await validate(newUser, { skipMissingProperties: true }); // errors is an array of validation errors
+        const AddressErrors: ValidationError[] = await validate(newAddress, { skipMissingProperties: true }); // errors is an array of validation errors
+        if (UserErrors.length > 0 || AddressErrors.length > 0) {
             // return BAD request status code and errors array
             ctx.status = 400;
             ctx.body = errors;
-        } else if (await userRepository.findOne({ email: newUser.email, userID: newUser.userID })) {
+        } else if (await userRepository.findOne({ email: newUser.email })) {
             // return BAD request status code and email already exists error
-            ctx.status = 400;
-            ctx.body = 'The specified e-mail and userID already exists';
+            ctx.status = 208;
+            ctx.body = '이메일이 이미 존재합니다.';
         } else {
             // save the user contained in the POST body
             const user = await userRepository.save(newUser);
+            const address = await addressRepository.save(newAddress);
 
             let token = null;
             try {
-                token = await UserController.token(newUser);
+                token = await UserController.token(user);
             } catch (error) {
                 ctx.throw(500, error);
             }
             // return CREATED status code and updated user
 
-            ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
+            ctx.cookies.set('access_token', token, { httpOnly: true, sign: true, maxAge: 1000 * 60 * 60 * 24 });
             ctx.status = 201;
-            ctx.body = user;
         }
     }
     public static async updateUser(ctx: BaseContext) {
@@ -132,7 +142,7 @@ export default class UserController {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load the user by id
-        const userToRemove: User = await userRepository.findOne(ctx.params.userID);
+        const userToRemove: User = await userRepository.findOne(ctx.request.body.userID);
         if (!userToRemove) {
             // return a BAD REQUEST status code and error message
             ctx.status = 400;
@@ -149,7 +159,6 @@ export default class UserController {
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
         const target = ctx.request.body;
-        console.log(target);
         const user: User = await userRepository.findOne({ userID: target.userID });
 
         if (user) {
@@ -161,28 +170,26 @@ export default class UserController {
                 try {
                     token = await UserController.token(user);
                 } catch (error) {
-                    ctx.throw(500, error);
+                    ctx.status = 500;
                 }
 
                 ctx.cookies.set('access_token', token, {
-                    httpOnly: true,
+                    httpOnly: false,
+                    sign: true,
                     maxAge: 1000 * 60 * 60 * 24,
                 });
 
-                ctx.redirect('/');
-                return;
+                ctx.status = 202;
             } else {
                 ctx.status = 400;
-                ctx.body = '아이디 또는 비밀번호를 확인해주세요.';
             }
         } else {
             // return a BAD REQUEST status code and error message
             ctx.status = 400;
-            ctx.body = '일치하는 회원 정보가 없습니다.';
         }
     }
 
-    public static async logOut() {
+    public static async logOut(ctx: BaseContext) {
         ctx.cookies.set('access_token', null, {
             maxAge: 0,
             httpOnly: true,

@@ -25,7 +25,7 @@ export function generateToken(payload: Object): Promise<Object> {
 
 export function decodeToken(token: String): Promise<Object> {
     return new Promise((resolve, reject) => {
-        jwt.verify(token, jwtSecret, (erro: any, decoded: any) => {
+        jwt.verify(token, jwtSecret, (error: any, decoded: any) => {
             if (error) reject(error);
             resolve(decoded);
         });
@@ -38,8 +38,8 @@ export async function jwtMiddleware(ctx: BaseContext, next: any) {
 
     try {
         const decoded = await decodeToken(token); // 토큰을 디코딩 합니다
-
         // 토큰 만료일이 하루밖에 안남으면 토큰을 재발급합니다
+
         if (Date.now() / 1000 - decoded.iat > 60 * 60) {
             // 하루가 지나면 갱신해준다.
             const { id, userID, email } = decoded;
@@ -50,12 +50,12 @@ export async function jwtMiddleware(ctx: BaseContext, next: any) {
             });
         }
 
-        // ctx.request.user 에 디코딩된 값을 넣어줍니다
         ctx.request.user = decoded;
+
+        // ctx.request.user 에 디코딩된 값을 넣어줍니다
     } catch (e) {
         // token validate 실패
         ctx.request.user = null;
     }
-
     return next();
 }
