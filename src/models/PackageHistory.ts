@@ -21,7 +21,11 @@ export class PackageHistory {
     @JoinColumn()
     package: Package;
 
-    @ManyToOne((type) => User, (user) => user.packageHistories)
+    @ManyToOne((type) => User, (user) => user.packageHistories, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: true,
+    })
     user: User;
 
     @Column('timestamp', { nullable: true })

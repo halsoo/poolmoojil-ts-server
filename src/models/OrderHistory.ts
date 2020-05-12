@@ -18,17 +18,21 @@ export class OrderHistory {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne((type) => User, (user) => user.orderHistories)
+    @ManyToOne((type) => User, (user) => user.orderHistories, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: true,
+    })
     user: User;
 
     @Column('boolean')
     isBook: boolean;
 
-    @OneToOne((type) => Book, { nullable: true })
+    @OneToOne((type) => Book, { nullable: true, cascade: true, onDelete: 'CASCADE', primary: true })
     @JoinColumn()
     book: Book;
 
-    @OneToOne((type) => Good, { nullable: true })
+    @OneToOne((type) => Good, { nullable: true, cascade: true, onDelete: 'CASCADE', primary: true })
     @JoinColumn()
     good: Good;
 

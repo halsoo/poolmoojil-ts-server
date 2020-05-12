@@ -15,7 +15,11 @@ export class Address {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne((type) => User, (user) => user.address)
+    @ManyToOne((type) => User, (user) => user.address, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: true,
+    })
     user: User;
 
     @Column('text')

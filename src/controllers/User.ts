@@ -89,7 +89,6 @@ export default class UserController {
             skipMissingProperties: true,
         }); // errors is an array of validation errors
 
-        console.log(UserErrors, AddressErrors);
         if (UserErrors.length > 0 || AddressErrors.length > 0) {
             // return BAD request status code and errors array
             ctx.status = 400;
@@ -107,7 +106,7 @@ export default class UserController {
             // return CREATED status code and updated user
 
             ctx.cookies.set('access_token', token, {
-                httpOnly: true,
+                httpOnly: false,
                 sign: true,
                 maxAge: 1000 * 60 * 60 * 24,
             });

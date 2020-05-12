@@ -22,7 +22,11 @@ export class GatheringHistory {
     @JoinColumn()
     gathering: Gathering;
 
-    @ManyToOne((type) => User, (user) => user.gatheringHistories)
+    @ManyToOne((type) => User, (user) => user.gatheringHistories, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: true,
+    })
     user: User;
 
     @Column('int', { nullable: true })
