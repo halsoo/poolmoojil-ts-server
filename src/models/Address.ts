@@ -19,7 +19,7 @@ export class Address {
     user: User;
 
     @Column('text')
-    @Length(100)
+    @Length(1, 100)
     name: string;
 
     @Column('text')

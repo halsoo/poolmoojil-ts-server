@@ -6,7 +6,7 @@ import { getManager, Repository, Not, Equal } from 'typeorm';
 import { validate, ValidationError } from 'class-validator';
 import { generateToken } from '../lib/token';
 import { User } from '../models/User'; 
-import {Address} from '../models/Address';
+import { Address } from '../models/Address';
 
 export default class UserController {
     public static async token(User: User) {
@@ -18,7 +18,7 @@ export default class UserController {
 
         return generateToken(payload);
     }
-
+    
     public static async getUsers(ctx: BaseContext, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
@@ -42,8 +42,22 @@ export default class UserController {
             ctx.status = 200;
         }
     }
+    public static async getEmail(ctx: BaseContext) {
+        // get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load user by id
+        const user[]: User = await userRepository.findOne({ userID: ctx.params.email });
+        if (user) {
+            // return OK status code and loaded user object
+            ctx.status = 208;
+        } else {
+            // return a BAD REQUEST status code and error message
+            ctx.status = 200;
+        }
+    }
     public static async createUser(ctx: BaseContext) {
         // get a user repository to perform operations with user
+        console.log('signup!!!!!');
         const userRepository: Repository<User> = getManager().getRepository(User);
         const addressRepository: Repository<Address> = getManager().getRepository(Address);
         // build up entity user to be saved
@@ -55,25 +69,24 @@ export default class UserController {
         newUser.email = ctx.request.body.email;
         newUser.phone = ctx.request.body.phone;
         newUser.birth = ctx.request.body.birth;
-        newUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, SECRET);
+        newUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
 
         newAddress.user = newUser;
         newAddress.name = '기본';
         newAddress.zip = ctx.request.body.zipCode;
         newAddress.addressA = ctx.request.body.addressA;
         newAddress.addressB = ctx.request.body.addressB;
+
+        newUser.address = [newAddress];
         //validate(ctx.request.body.name);
         // validate user entity
         const UserErrors: ValidationError[] = await validate(newUser, { skipMissingProperties: true }); // errors is an array of validation errors
         const AddressErrors: ValidationError[] = await validate(newAddress, { skipMissingProperties: true }); // errors is an array of validation errors
+        
+        console.log(UserErrors, AddressErrors);
         if (UserErrors.length > 0 || AddressErrors.length > 0) {
             // return BAD request status code and errors array
             ctx.status = 400;
-            ctx.body = errors;
-        } else if (await userRepository.findOne({ email: newUser.email })) {
-            // return BAD request status code and email already exists error
-            ctx.status = 208;
-            ctx.body = '이메일이 이미 존재합니다.';
         } else {
             // save the user contained in the POST body
             const user = await userRepository.save(newUser);
@@ -160,11 +173,11 @@ export default class UserController {
         // load user by id
         const target = ctx.request.body;
         const user: User = await userRepository.findOne({ userID: target.userID });
-
+        console.log(user);
         if (user) {
             if (
                 user.userID === target.userID &&
-                user.hashedPassword === target.password //bcrypt.hash(target.password, SECRET)
+                await bcrypt.compare(target.password, user.hashedPassword)
             ) {
                 let token = null;
                 try {
