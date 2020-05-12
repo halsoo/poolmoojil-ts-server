@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { getManager, Repository, Not, Equal } from 'typeorm';
 import { validate, ValidationError } from 'class-validator';
 import { generateToken } from '../lib/token';
-import { User } from '../models/User'; 
+import { User } from '../models/User';
 import { Address } from '../models/Address';
 
 export default class UserController {
@@ -18,7 +18,7 @@ export default class UserController {
 
         return generateToken(payload);
     }
-    
+
     public static async getUsers(ctx: BaseContext, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
@@ -33,7 +33,8 @@ export default class UserController {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
-        const user[]: User = await userRepository.findOne({ userID: ctx.params.id });
+        const user: User = await userRepository.findOne({ userID: ctx.params.id });
+        console.log(user);
         if (user) {
             // return OK status code and loaded user object
             ctx.status = 208;
@@ -46,7 +47,8 @@ export default class UserController {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
-        const user[]: User = await userRepository.findOne({ userID: ctx.params.email });
+        const user: User = await userRepository.findOne({ email: ctx.params.email });
+        console.log(user);
         if (user) {
             // return OK status code and loaded user object
             ctx.status = 208;
@@ -80,9 +82,13 @@ export default class UserController {
         newUser.address = [newAddress];
         //validate(ctx.request.body.name);
         // validate user entity
-        const UserErrors: ValidationError[] = await validate(newUser, { skipMissingProperties: true }); // errors is an array of validation errors
-        const AddressErrors: ValidationError[] = await validate(newAddress, { skipMissingProperties: true }); // errors is an array of validation errors
-        
+        const UserErrors: ValidationError[] = await validate(newUser, {
+            skipMissingProperties: true,
+        }); // errors is an array of validation errors
+        const AddressErrors: ValidationError[] = await validate(newAddress, {
+            skipMissingProperties: true,
+        }); // errors is an array of validation errors
+
         console.log(UserErrors, AddressErrors);
         if (UserErrors.length > 0 || AddressErrors.length > 0) {
             // return BAD request status code and errors array
@@ -100,7 +106,11 @@ export default class UserController {
             }
             // return CREATED status code and updated user
 
-            ctx.cookies.set('access_token', token, { httpOnly: true, sign: true, maxAge: 1000 * 60 * 60 * 24 });
+            ctx.cookies.set('access_token', token, {
+                httpOnly: true,
+                sign: true,
+                maxAge: 1000 * 60 * 60 * 24,
+            });
             ctx.status = 201;
         }
     }
@@ -177,7 +187,7 @@ export default class UserController {
         if (user) {
             if (
                 user.userID === target.userID &&
-                await bcrypt.compare(target.password, user.hashedPassword)
+                (await bcrypt.compare(target.password, user.hashedPassword))
             ) {
                 let token = null;
                 try {
