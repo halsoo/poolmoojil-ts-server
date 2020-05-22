@@ -34,7 +34,7 @@ export default class UserController {
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
         const user: User = await userRepository.findOne({ userID: ctx.params.id });
-        console.log(user);
+
         if (user) {
             // return OK status code and loaded user object
             ctx.status = 208;
@@ -48,7 +48,7 @@ export default class UserController {
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
         const user: User = await userRepository.findOne({ email: ctx.params.email });
-        console.log(user);
+
         if (user) {
             // return OK status code and loaded user object
             ctx.status = 208;
@@ -59,7 +59,6 @@ export default class UserController {
     }
     public static async createUser(ctx: BaseContext) {
         // get a user repository to perform operations with user
-        console.log('signup!!!!!');
         const userRepository: Repository<User> = getManager().getRepository(User);
         const addressRepository: Repository<Address> = getManager().getRepository(Address);
         // build up entity user to be saved
@@ -182,7 +181,7 @@ export default class UserController {
         // load user by id
         const target = ctx.request.body;
         const user: User = await userRepository.findOne({ userID: target.userID });
-        console.log(user);
+
         if (user) {
             if (
                 user.userID === target.userID &&

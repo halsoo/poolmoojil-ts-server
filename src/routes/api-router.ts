@@ -4,9 +4,11 @@ import createTestData = require('../qa/createTestData');
 import { getConnection, Connection, AdvancedConsoleLogger } from 'typeorm';
 
 import { LogRouter } from './log-router';
+import { GatheringRouter } from './gathering-router';
+import { PackageRouter } from './package-router';
+import { BookRouter } from './book-router';
+import { GoodRouter } from './good-router';
 
-import { Book } from '../models/Book';
-import { Gathering } from '../models/Gathering';
 import { About } from '../models/About';
 import { Place } from '../models/Place';
 
@@ -19,51 +21,10 @@ apiRouter.get('/', (ctx, next) => {
 });
 
 apiRouter.use('/users', LogRouter.routes());
-
-apiRouter.get('/books', async (ctx, next) => {
-    if (ctx.request.user) {
-        try {
-            const books = await getConnection()
-                .createQueryBuilder()
-                .select('books')
-                .from(Book, 'books')
-                .getMany();
-
-            ctx.body = books;
-        } catch (err) {
-            ctx.status = err.statusCode || err.status || 500;
-            ctx.body = {
-                message: err.message,
-            };
-        }
-    }
-    await next();
-});
-
-apiRouter.get('/gatherings', async (ctx, next) => {
-    try {
-        const gatherings = await getConnection()
-            .createQueryBuilder()
-            .select('gatherings')
-            .from(Gathering, 'gatherings')
-            .getMany();
-
-        ctx.body = gatherings;
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
-    }
-    await next();
-});
-
-apiRouter.get('/store', async (ctx, next) => {
-    const store = 'store';
-    ctx.status = HttpStatus.OK;
-    ctx.body = store;
-    await next();
-});
+apiRouter.use('/gathering', GatheringRouter.routes());
+apiRouter.use('/package', PackageRouter.routes());
+apiRouter.use('/book', BookRouter.routes());
+apiRouter.use('/good', GoodRouter.routes());
 
 apiRouter.get('/aboutTexts', async (ctx, next) => {
     try {
@@ -105,7 +66,10 @@ apiRouter.get('/places', async (ctx, next) => {
 // apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
 // apiRouter.post('/books', createTestData.TestData.createTestBooks);
 
-apiRouter.post('/user', createTestData.TestData.createTestUsers);
+// apiRouter.post('/curation', createTestData.TestData.createTestCuration);
 
 // apiRouter.post('/places', createTestData.TestData.createPlaces);
 // apiRouter.post('/aboutTexts', createTestData.TestData.createAboutTexts);
+// apiRouter.post('/testImages', createTestData.TestData.createTestImages);
+// apiRouter.post('/goods', createTestData.TestData.createTestGoods);
+// apiRouter.post('/testPackages', createTestData.TestData.createTestPackages);

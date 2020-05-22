@@ -15,7 +15,12 @@ export class Good {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     mainImg: Image;
 
@@ -24,6 +29,9 @@ export class Good {
 
     @Column('text', { nullable: true })
     type: string;
+
+    @Column('int', { nullable: true })
+    quantity: number;
 
     @Column('money')
     price: number;
@@ -43,7 +51,12 @@ export class Good {
     @Column('text', { nullable: true })
     desc: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     additionalImg: Image;
 

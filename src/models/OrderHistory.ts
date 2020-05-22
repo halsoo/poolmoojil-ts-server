@@ -7,6 +7,8 @@ import {
     JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    ManyToMany,
+    JoinTable,
 } from 'typeorm';
 
 import { User } from './User';
@@ -20,7 +22,7 @@ export class OrderHistory {
 
     @ManyToOne((type) => User, (user) => user.orderHistories, {
         cascade: true,
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         primary: true,
     })
     user: User;
@@ -28,16 +30,29 @@ export class OrderHistory {
     @Column('boolean')
     isBook: boolean;
 
-    @OneToOne((type) => Book, { nullable: true, cascade: true, onDelete: 'CASCADE', primary: true })
-    @JoinColumn()
-    book: Book;
+    @ManyToMany((type) => Book, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: true,
+    })
+    @JoinTable()
+    books: Book[];
 
-    @OneToOne((type) => Good, { nullable: true, cascade: true, onDelete: 'CASCADE', primary: true })
-    @JoinColumn()
-    good: Good;
+    @ManyToMany((type) => Good, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: true,
+    })
+    @JoinTable()
+    goods: Good[];
 
     @Column('text', { nullable: true })
     additionalAddress: string;
+
+    @Column('text', { nullable: true })
+    transactionStatus: string;
 
     @Column('int', { nullable: true })
     creditUse: number;

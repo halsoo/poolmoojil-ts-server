@@ -4,10 +4,11 @@ import {
     Column,
     OneToOne,
     JoinColumn,
+    JoinTable,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany,
     ManyToOne,
+    ManyToMany,
 } from 'typeorm';
 
 import { Book } from './Book';
@@ -19,35 +20,79 @@ export class Gathering {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     mainImg: Image;
 
     @Column('text')
     title: string;
 
-    @Column('tsrange')
-    date: Date;
+    @Column('int', { nullable: true })
+    count: number;
 
-    @ManyToOne((type) => Place, (place) => place.gatherings)
+    @Column('money', { nullable: true })
+    oncePrice: number;
+
+    @Column('money', { nullable: true })
+    fullPrice: number;
+
+    @Column('daterange', { nullable: true })
+    rangeDate: string;
+
+    @Column('date', { nullable: true })
+    oneTimeDate: string;
+
+    @Column('time', { nullable: true })
+    time: string;
+
+    @Column('text', { nullable: true })
+    stringDate: string;
+
+    @Column('boolean', { nullable: true })
+    isAll: boolean;
+
+    @Column('boolean', { nullable: true })
+    isOver: boolean;
+
+    @ManyToOne((type) => Place, (place) => place.gatherings, {
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: false,
+    })
     place: Place;
 
-    @Column('text', { nullable: true })
+    @Column('text')
     category: string;
 
-    @Column('text', { nullable: true })
+    @Column('text')
     format: string;
 
     @Column('text', { nullable: true })
     speaker: string;
 
-    @OneToOne((type) => Book, { nullable: true })
-    book: Book;
+    @ManyToMany((type) => Book, (book) => book.gatherings, {
+        nullabel: true,
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: false,
+    })
+    @JoinTable()
+    books: Book[];
 
     @Column('text')
     desc: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     additionalImg: Image[];
 

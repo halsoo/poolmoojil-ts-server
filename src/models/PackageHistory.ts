@@ -17,14 +17,20 @@ export class PackageHistory {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Package)
+    @OneToOne((type) => Package, {
+        nullable: false,
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: false,
+    })
     @JoinColumn()
     package: Package;
 
     @ManyToOne((type) => User, (user) => user.packageHistories, {
+        nullable: false,
         cascade: true,
-        onDelete: 'CASCADE',
-        primary: true,
+        onDelete: 'SET NULL',
+        primary: false,
     })
     user: User;
 

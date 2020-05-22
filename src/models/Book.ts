@@ -6,21 +6,32 @@ import {
     JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    ManyToOne,
+    ManyToMany,
 } from 'typeorm';
 
 import { Image } from './Image';
+import { Gathering } from './Gathering';
 
 @Entity('books')
 export class Book {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     mainImg: Image;
 
     @Column('text', { nullable: true })
     type: string;
+
+    @Column('int', { nullable: true })
+    quantity: number;
 
     @Column('text')
     title: string;
@@ -49,6 +60,9 @@ export class Book {
     @Column('text', { nullable: true })
     publisher: string;
 
+    @Column('date', { nullable: true })
+    publishDate: string;
+
     @Column('text', { nullable: true })
     ISBN: string;
 
@@ -61,7 +75,15 @@ export class Book {
     @Column('text', { nullable: true })
     desc: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @ManyToMany((type) => Gathering, (gathering) => gathering.books, { nullable: true })
+    gatherings: Gathering[];
+
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     additionalImg: Image[];
 

@@ -16,11 +16,21 @@ export class MonthlyCuration {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToMany((type) => Book, { nullable: true })
+    @ManyToMany((type) => Book, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinTable()
     book: Book[];
 
-    @ManyToMany((type) => Good, { nullable: true })
+    @ManyToMany((type) => Good, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinTable()
     good: Good[];
 

@@ -18,11 +18,22 @@ export class GatheringSubsc {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Gathering)
+    @Column('int', { nullable: true })
+    count: number;
+
+    @OneToOne((type) => Gathering, {
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: false,
+    })
     @JoinColumn()
     gathering: Gathering;
 
-    @ManyToMany((type) => User, (user) => user.gatheringSubscs)
+    @ManyToMany((type) => User, (user) => user.gatheringSubscs, {
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: true,
+    })
     @JoinTable()
     users: User[];
 

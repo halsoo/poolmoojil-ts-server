@@ -22,7 +22,11 @@ export class PackageSubsc {
     @JoinColumn()
     package: Package;
 
-    @ManyToMany((type) => User, (user) => user.packageSubscs)
+    @ManyToMany((type) => User, (user) => user.packageSubscs, {
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: true,
+    })
     @JoinTable()
     users: User[];
 

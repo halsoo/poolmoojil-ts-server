@@ -54,21 +54,13 @@ export class User {
     @OneToMany((type) => OrderHistory, (orderHistory) => orderHistory.user)
     orderHistories: OrderHistory[];
 
-    @ManyToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.users, {
-        cascade: true,
-        onDelete: 'CASCADE',
-        primary: true,
-    })
-    packageSubcs: PackageSubsc[];
+    @ManyToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.users)
+    packageSubscs: PackageSubsc[];
 
     @OneToMany((type) => PackageHistory, (packageHistory) => packageHistory.user)
     packageHistories: PackageHistory[];
 
-    @ManyToMany((type) => GatheringSubsc, (gatheringSubsc) => gatheringSubsc.users, {
-        cascade: true,
-        onDelete: 'CASCADE',
-        primary: true,
-    })
+    @ManyToMany((type) => GatheringSubsc, (gatheringSubsc) => gatheringSubsc.users)
     gatheringSubscs: GatheringSubsc[];
 
     @OneToMany((type) => GatheringHistory, (gatheringHistory) => gatheringHistory.user)

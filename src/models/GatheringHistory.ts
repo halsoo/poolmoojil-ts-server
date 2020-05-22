@@ -18,13 +18,17 @@ export class GatheringHistory {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Gathering)
+    @OneToOne((type) => Gathering, {
+        cascade: true,
+        onDelete: 'SET NULL',
+        primary: false,
+    })
     @JoinColumn()
     gathering: Gathering;
 
     @ManyToOne((type) => User, (user) => user.gatheringHistories, {
         cascade: true,
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         primary: true,
     })
     user: User;

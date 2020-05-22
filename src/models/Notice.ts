@@ -23,7 +23,12 @@ export class Notice {
     @Column('text')
     desc: string;
 
-    @OneToOne((type) => Image, { nullable: true })
+    @OneToOne((type) => Image, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
     @JoinColumn()
     img: Image;
 
