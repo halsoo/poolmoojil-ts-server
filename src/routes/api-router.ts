@@ -64,12 +64,13 @@ apiRouter.get('/places', async (ctx, next) => {
 });
 
 // apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
-// apiRouter.post('/books', createTestData.TestData.createTestBooks);
+//apiRouter.post('/books', createTestData.TestData.createTestBooks);
+apiRouter.post('/updateBook', createTestData.TestData.updateTestBooks);
 
 // apiRouter.post('/curation', createTestData.TestData.createTestCuration);
 
 // apiRouter.post('/places', createTestData.TestData.createPlaces);
 // apiRouter.post('/aboutTexts', createTestData.TestData.createAboutTexts);
-// apiRouter.post('/testImages', createTestData.TestData.createTestImages);
+apiRouter.post('/testImages', createTestData.TestData.createTestImages);
 // apiRouter.post('/goods', createTestData.TestData.createTestGoods);
 // apiRouter.post('/testPackages', createTestData.TestData.createTestPackages);

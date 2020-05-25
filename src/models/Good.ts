@@ -6,6 +6,7 @@ import {
     JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 import { Image } from './Image';
@@ -51,14 +52,10 @@ export class Good {
     @Column('text', { nullable: true })
     desc: string;
 
-    @OneToOne((type) => Image, {
+    @OneToMany((type) => Image, (image) => image.good, {
         nullable: true,
-        cascade: true,
-        onDelete: 'CASCADE',
-        primary: false,
     })
-    @JoinColumn()
-    additionalImg: Image;
+    additionalImg: Image[];
 
     @CreateDateColumn()
     createdAt: Date;

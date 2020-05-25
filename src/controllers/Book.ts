@@ -42,6 +42,7 @@ export default class BookController {
                 alias: 'book',
                 leftJoinAndSelect: {
                     mainImg: 'book.mainImg',
+                    additionalImg: 'book.additionalImg',
                     gatherings: 'book.gatherings',
                 },
             },

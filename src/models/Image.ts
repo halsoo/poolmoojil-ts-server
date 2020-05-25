@@ -3,12 +3,16 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn
+    ManyToOne,
+    UpdateDateColumn,
+    JoinColumn,
 } from 'typeorm';
 
-@Entity('images')
-export class Image { 
+import { Book } from './Book';
+import { Good } from './Good';
 
+@Entity('images')
+export class Image {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -17,6 +21,24 @@ export class Image {
 
     @Column('text')
     link: string;
+
+    @ManyToOne((type) => Book, (book) => book.additionalImg, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
+    @JoinColumn()
+    book: Book;
+
+    @ManyToOne((type) => Good, (good) => good.additionalImg, {
+        nullable: true,
+        cascade: true,
+        onDelete: 'CASCADE',
+        primary: false,
+    })
+    @JoinColumn()
+    good: Good;
 
     @CreateDateColumn()
     createdAt: Date;

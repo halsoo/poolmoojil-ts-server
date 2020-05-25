@@ -6,7 +6,7 @@ import {
     JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToOne,
+    OneToMany,
     ManyToMany,
 } from 'typeorm';
 
@@ -78,13 +78,9 @@ export class Book {
     @ManyToMany((type) => Gathering, (gathering) => gathering.books, { nullable: true })
     gatherings: Gathering[];
 
-    @OneToOne((type) => Image, {
+    @OneToMany((type) => Image, (image) => image.book, {
         nullable: true,
-        cascade: true,
-        onDelete: 'CASCADE',
-        primary: false,
     })
-    @JoinColumn()
     additionalImg: Image[];
 
     @CreateDateColumn()
