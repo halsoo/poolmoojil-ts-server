@@ -1,5 +1,5 @@
 import { BaseContext } from 'koa';
-import { getManager, Repository, Like } from 'typeorm';
+import { getManager, Repository, Like, Between } from 'typeorm';
 
 import { Gathering } from '../models/Gathering';
 import { User } from '../models/User';
@@ -33,6 +33,32 @@ export default class GatheringController {
             ctx.status = 200;
             ctx.body = gatherings;
         } catch {
+            ctx.status = 404;
+        }
+    }
+
+    public static async getUpcomingGathering(ctx: BaseContext) {
+        // get a user repository to perform operations with user
+        const gatheringRepository: Repository<Gathering> = getManager().getRepository(Gathering);
+        // load user by id
+
+        const gathering: Gathering = await gatheringRepository.findOne({
+            join: {
+                alias: 'gathering',
+                leftJoinAndSelect: {
+                    mainImg: 'gathering.mainImg',
+                    place: 'gathering.place',
+                },
+            },
+            where: { isOver: false },
+        });
+
+        if (gathering) {
+            // return OK status code and loaded user object
+            ctx.status = 200;
+            ctx.body = gathering;
+        } else {
+            // return a BAD REQUEST status code and error message
             ctx.status = 404;
         }
     }

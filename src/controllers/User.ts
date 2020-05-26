@@ -29,6 +29,16 @@ export default class UserController {
         ctx.body = users;
     }
 
+    public static async getUserCookie(ctx: BaseContext, next: any) {
+        //get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load all users
+        const user: User = await userRepository.findOne({ id: ctx.request.user.id });
+        // return OK status code and loaded users array
+        ctx.status = 200;
+        ctx.body = user;
+    }
+
     public static async getUser(ctx: BaseContext) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);

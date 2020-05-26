@@ -55,6 +55,7 @@ export class Good {
     @OneToMany((type) => Image, (image) => image.good, {
         nullable: true,
     })
+    @JoinColumn()
     additionalImg: Image[];
 
     @CreateDateColumn()

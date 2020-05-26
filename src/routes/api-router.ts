@@ -8,11 +8,10 @@ import { GatheringRouter } from './gathering-router';
 import { PackageRouter } from './package-router';
 import { BookRouter } from './book-router';
 import { GoodRouter } from './good-router';
+import { NoticeRouter } from './notice-router';
 
 import { About } from '../models/About';
 import { Place } from '../models/Place';
-
-const HttpStatus = require('http-status');
 
 export const apiRouter = new Router();
 
@@ -25,6 +24,7 @@ apiRouter.use('/gathering', GatheringRouter.routes());
 apiRouter.use('/package', PackageRouter.routes());
 apiRouter.use('/book', BookRouter.routes());
 apiRouter.use('/good', GoodRouter.routes());
+apiRouter.use('/notice', NoticeRouter.routes());
 
 apiRouter.get('/aboutTexts', async (ctx, next) => {
     try {
@@ -74,3 +74,4 @@ apiRouter.post('/updateBook', createTestData.TestData.updateTestBooks);
 apiRouter.post('/testImages', createTestData.TestData.createTestImages);
 // apiRouter.post('/goods', createTestData.TestData.createTestGoods);
 // apiRouter.post('/testPackages', createTestData.TestData.createTestPackages);
+apiRouter.post('/testNotices', createTestData.TestData.createNotices);

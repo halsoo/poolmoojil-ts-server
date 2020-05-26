@@ -4,6 +4,7 @@ export const LogRouter = new Router();
 //Routes for the user entity
 LogRouter.get('/', UserController.getUsers); //Get all users in the database
 LogRouter.get('/getuser/:id', UserController.getUser); //Get a single user by id
+LogRouter.get('/getbycookie', UserController.getUserCookie);
 LogRouter.get('/getemail/:email', UserController.getEmail); //Get a single user by id
 
 LogRouter.put('/:id', UserController.updateUser); //Update a single user that matches the passed id
