@@ -13,6 +13,7 @@ import {
 import { Image } from './Image';
 import { Book } from './Book';
 import { Good } from './Good';
+import { MonthlyCuration } from './MonthlyCuration';
 
 @Entity('packages')
 export class Package {
@@ -31,6 +32,10 @@ export class Package {
 
     @Column('money', { nullable: true })
     price: number;
+
+    @OneToOne((type) => MonthlyCuration, { nullable: true })
+    @JoinColumn()
+    monthlyCurated: MonthlyCuration;
 
     @ManyToMany((type) => Book, {
         nullable: true,

@@ -36,6 +36,9 @@ export class Address {
     @Column('text', { nullable: true })
     addressB: string;
 
+    @Column('boolean', { nullable: true })
+    isIslandMountainousArea: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

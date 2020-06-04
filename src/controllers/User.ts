@@ -33,7 +33,16 @@ export default class UserController {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        const user: User = await userRepository.findOne({ id: ctx.request.user.id });
+        console.log(ctx.request.user);
+        const user: User = await userRepository.findOne({
+            join: {
+                alias: 'user',
+                leftJoinAndSelect: {
+                    address: 'user.address',
+                },
+            },
+            where: { id: ctx.request.user.id },
+        });
         // return OK status code and loaded users array
         ctx.status = 200;
         ctx.body = user;
@@ -190,8 +199,11 @@ export default class UserController {
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
         const target = ctx.request.body;
-        const user: User = await userRepository.findOne({ userID: target.userID });
-
+        const user: User = await userRepository.findOne({
+            select: ['id', 'email', 'userID', 'hashedPassword'],
+            where: { userID: target.userID },
+        });
+        console.log(user);
         if (user) {
             if (
                 user.userID === target.userID &&

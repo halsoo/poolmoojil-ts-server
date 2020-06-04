@@ -67,6 +67,9 @@ export default class PackageController {
                 alias: 'package',
                 leftJoinAndSelect: {
                     mainImg: 'package.mainImg',
+                    monthlyCurated: 'package.monthlyCurated',
+                    monthlyCuratedBook: 'monthlyCurated.book',
+                    monthlyCuratedBookImg: 'monthlyCuratedBook.mainImg',
                     bookList: 'package.bookList',
                     BookMainImg: 'bookList.mainImg',
                     goodList: 'package.goodList',

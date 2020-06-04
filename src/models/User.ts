@@ -30,7 +30,7 @@ export class User {
     @Column('text')
     name: string;
 
-    @Column('text')
+    @Column('text', { select: false })
     hashedPassword: string;
 
     @Column('text')
@@ -50,6 +50,9 @@ export class User {
 
     @OneToMany((type) => Address, (address) => address.user)
     address: Address[];
+
+    @Column('int', { nullable: true })
+    credit: number;
 
     @OneToMany((type) => OrderHistory, (orderHistory) => orderHistory.user)
     orderHistories: OrderHistory[];
