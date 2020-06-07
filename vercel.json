@@ -1,0 +1,17 @@
+{
+    "name": "poolmoojil",
+    "public": true,
+    "version": 2,
+    "build": [
+        {
+            "src": "dist/**/*.js",
+            "use": "@now/node"
+        }
+    ],
+    "routs": [
+        {
+            "src": "/",
+            "dest": "dist/app.js"
+        }
+    ]
+}
