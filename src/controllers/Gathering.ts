@@ -99,7 +99,7 @@ export default class GatheringController {
         const upperDate = moment().add(2, 'months').format('YYYY-MM-DD');
         const lowerDate = moment().subtract(2, 'months').format('YYYY-MM-DD');
 
-        const gathering: Gathering[] = await gatheringRepository.find({
+        const gathering: Gathering[] | any = await gatheringRepository.find({
             where: [
                 { isAll: true, isOver: false },
                 { oneTimeDate: Between(lowerDate, upperDate), isOver: false },
@@ -115,8 +115,8 @@ export default class GatheringController {
 
         for (const event of gathering) {
             if (event.isAll && !event.isOver) {
-                const weekStr = event.stringDate.substring(3, 4);
-                const dayStr = event.stringDate.substring(6, 7);
+                const weekStr: any = event.stringDate.substring(3, 4);
+                const dayStr: any = event.stringDate.substring(6, 7);
                 const week: any = convertKorToWeekNum(weekStr);
                 const day: any = convertKorToDayNum(dayStr);
                 const targetDayObj = moment().subtract(2, 'months');

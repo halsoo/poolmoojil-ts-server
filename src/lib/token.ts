@@ -1,6 +1,5 @@
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret: any = process.env.JWT_SECRET;
 import * as jwt from 'jsonwebtoken';
-import { BaseContext } from 'koa';
 
 /**
  * JWT 토큰 생성
@@ -23,7 +22,7 @@ export function generateToken(payload: Object): Promise<Object> {
     });
 }
 
-export function decodeToken(token: String): Promise<Object> {
+export function decodeToken(token: any): Promise<Object> {
     return new Promise((resolve, reject) => {
         jwt.verify(token, jwtSecret, (error: any, decoded: any) => {
             if (error) reject(error);
@@ -32,12 +31,12 @@ export function decodeToken(token: String): Promise<Object> {
     });
 }
 
-export async function jwtMiddleware(ctx: BaseContext, next: any) {
+export async function jwtMiddleware(ctx: any, next: any) {
     const token = ctx.cookies.get('access_token');
     if (!token) return next();
 
     try {
-        const decoded = await decodeToken(token); // 토큰을 디코딩 합니다
+        const decoded: any = await decodeToken(token); // 토큰을 디코딩 합니다
         // 토큰 만료일이 하루밖에 안남으면 토큰을 재발급합니다
 
         if (Date.now() / 1000 - decoded.iat > 60 * 60) {
