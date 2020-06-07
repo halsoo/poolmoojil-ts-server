@@ -4,14 +4,18 @@
     "version": 2,
     "builds": [
         {
-            "src": "src/app.ts",
-            "use": "@now/node-server"
+            "src": "now-entry.js",
+            "use": "@now/node",
+            "config": {
+                "helpers": false,
+                "includeFiles": ["dis/**"]
+            }
         }
     ],
     "routes": [
         {
-            "src": "/",
-            "dest": "/dist/app.js"
+            "src": "/.",
+            "dest": "now-entry.js"
         }
     ]
 }
