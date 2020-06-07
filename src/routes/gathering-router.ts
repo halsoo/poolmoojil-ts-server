@@ -6,4 +6,3 @@ GatheringRouter.post('/', GatheringController.getGatherings); //Get all users in
 GatheringRouter.get('/getid/:id', GatheringController.getGatheringID); //Get a single user by id
 GatheringRouter.get('/upcoming', GatheringController.getUpcomingGathering);
 GatheringRouter.get('/threemonths', GatheringController.getThreeMonthsGathering);
-GatheringRouter.get('/test', GatheringController.test);

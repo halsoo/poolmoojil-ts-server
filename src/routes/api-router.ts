@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import axios from 'axios';
-import createTestData = require('../qa/createTestData');
+//import createTestData = require('../qa/createTestData');
 
 import { getConnection, Connection, AdvancedConsoleLogger } from 'typeorm';
 
@@ -25,7 +25,7 @@ apiRouter.use('/book', BookRouter.routes());
 apiRouter.use('/good', GoodRouter.routes());
 apiRouter.use('/notice', NoticeRouter.routes());
 
-apiRouter.post('/getaddress', async (ctx, next) => {
+apiRouter.post('/getaddress', async (ctx: any, next) => {
     try {
         const req = ctx.request.body;
         console.log(req);
