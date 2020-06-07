@@ -12,7 +12,7 @@ export const postgresDB = async () => {
         ssl: false,
         entities: postgresTables,
         logging: ['query', 'error'],
-        synchronize: false,
+        synchronize: true,
     }).then((connection) => {
         console.log('Database connection established');
     });
