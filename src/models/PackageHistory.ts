@@ -15,7 +15,7 @@ import { Package } from './Package';
 @Entity('packageHistories')
 export class PackageHistory {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Package, {
         nullable: false,
@@ -24,7 +24,7 @@ export class PackageHistory {
         primary: false,
     })
     @JoinColumn()
-    package: Package;
+    package: Package | undefined;
 
     @ManyToOne((type) => User, (user) => user.packageHistories, {
         nullable: false,
@@ -32,14 +32,14 @@ export class PackageHistory {
         onDelete: 'SET NULL',
         primary: false,
     })
-    user: User;
+    user: User | undefined;
 
     @Column('timestamp', { nullable: true })
-    purchaseDate: Date;
+    purchaseDate: Date | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

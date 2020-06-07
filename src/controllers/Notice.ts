@@ -1,10 +1,9 @@
-import { BaseContext } from 'koa';
 import { getManager, Repository, MoreThan } from 'typeorm';
 
 import { Notice } from '../models/Notice';
 
 export default class NoticeController {
-    public static async getNotices(ctx: BaseContext, next: any) {
+    public static async getNotices(ctx: any, next: any) {
         try {
             //get a user repository to perform operations with user
             const noticeRepository: Repository<Notice> = getManager().getRepository(Notice);
@@ -24,11 +23,11 @@ export default class NoticeController {
         }
     }
 
-    public static async getNoticeID(ctx: BaseContext) {
+    public static async getNoticeID(ctx: any) {
         // get a user repository to perform operations with user
         const noticeRepository: Repository<Notice> = getManager().getRepository(Notice);
         // load user by id
-        const notice: Notice = await noticeRepository.findOne({
+        const notice: Notice | undefined = await noticeRepository.findOne({
             join: {
                 alias: 'notice',
                 leftJoinAndSelect: {

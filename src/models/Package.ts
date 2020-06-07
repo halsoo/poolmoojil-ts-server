@@ -18,24 +18,24 @@ import { MonthlyCuration } from './MonthlyCuration';
 @Entity('packages')
 export class Package {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Image, { nullable: true, cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
-    mainImg: Image;
+    mainImg: Image | undefined;
 
     @Column('text')
-    title: string;
+    title: string | undefined;
 
     @Column('text')
-    desc: string;
+    desc: string | undefined;
 
     @Column('money', { nullable: true })
-    price: number;
+    price: number | undefined;
 
     @OneToOne((type) => MonthlyCuration, { nullable: true })
     @JoinColumn()
-    monthlyCurated: MonthlyCuration;
+    monthlyCurated: MonthlyCuration | undefined;
 
     @ManyToMany((type) => Book, {
         nullable: true,
@@ -43,7 +43,7 @@ export class Package {
         onDelete: 'SET NULL',
     })
     @JoinTable()
-    bookList: Book[];
+    bookList: Book[] | undefined;
 
     @ManyToMany((type) => Good, {
         nullable: true,
@@ -51,21 +51,21 @@ export class Package {
         onDelete: 'SET NULL',
     })
     @JoinTable()
-    goodList: Good[];
+    goodList: Good[] | undefined;
 
-    @Column('text', {nullable: true})
-    packageList: string;
+    @Column('text', { nullable: true })
+    packageList: string | undefined;
 
     @OneToOne((type) => Image, { nullable: true, cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
-    additionalImg: Image;
+    additionalImg: Image | undefined;
 
     @Column('date', { nullable: true })
-    date: Date;
+    date: string | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

@@ -1,4 +1,3 @@
-import { BaseContext } from 'koa';
 import { getManager, Repository, Like, Between, Raw } from 'typeorm';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -6,11 +5,9 @@ import 'moment/locale/ko';
 import { convertKorToDayNum, convertKorToWeekNum, rangeDateStr } from '../lib/util';
 
 import { Gathering } from '../models/Gathering';
-import { User } from '../models/User';
-import { Address } from '../models/Address';
 
 export default class GatheringController {
-    public static async getGatherings(ctx: BaseContext, next: any) {
+    public static async getGatherings(ctx: any, next: any) {
         try {
             //get a user repository to perform operations with user
             const gatheringRepository: Repository<Gathering> = getManager().getRepository(
@@ -19,7 +16,7 @@ export default class GatheringController {
 
             const req = ctx.request.body;
 
-            const where = {};
+            const where: any = {};
 
             if (req.category !== undefined) where.category = req.category;
             if (req.isOver !== undefined) where.isOver = req.isOver;
@@ -41,12 +38,12 @@ export default class GatheringController {
         }
     }
 
-    public static async getUpcomingGathering(ctx: BaseContext) {
+    public static async getUpcomingGathering(ctx: any) {
         // get a user repository to perform operations with user
         const gatheringRepository: Repository<Gathering> = getManager().getRepository(Gathering);
         // load user by id
 
-        const gathering: Gathering = await gatheringRepository.findOne({
+        const gathering: Gathering | undefined = await gatheringRepository.findOne({
             join: {
                 alias: 'gathering',
                 leftJoinAndSelect: {
@@ -67,11 +64,11 @@ export default class GatheringController {
         }
     }
 
-    public static async getGatheringID(ctx: BaseContext) {
+    public static async getGatheringID(ctx: any) {
         // get a user repository to perform operations with user
         const gatheringRepository: Repository<Gathering> = getManager().getRepository(Gathering);
         // load user by id
-        const gathering: Gathering = await gatheringRepository.findOne({
+        const gathering: Gathering | undefined = await gatheringRepository.findOne({
             join: {
                 alias: 'gathering',
                 leftJoinAndSelect: {
@@ -94,7 +91,7 @@ export default class GatheringController {
         }
     }
 
-    public static async getThreeMonthsGathering(ctx: BaseContext) {
+    public static async getThreeMonthsGathering(ctx: any) {
         // get a user repository to perform operations with user
         const gatheringRepository: Repository<Gathering> = getManager().getRepository(Gathering);
         // load user by id
@@ -120,8 +117,8 @@ export default class GatheringController {
             if (event.isAll && !event.isOver) {
                 const weekStr = event.stringDate.substring(3, 4);
                 const dayStr = event.stringDate.substring(6, 7);
-                const week = convertKorToWeekNum(weekStr);
-                const day = convertKorToDayNum(dayStr);
+                const week: any = convertKorToWeekNum(weekStr);
+                const day: any = convertKorToDayNum(dayStr);
                 const targetDayObj = moment().subtract(2, 'months');
                 const targetWeek = Math.ceil(targetDayObj.date() / 7);
                 const targetDay = parseInt(targetDayObj.format('E'));
@@ -189,30 +186,6 @@ export default class GatheringController {
             // return OK status code and loaded user object
             ctx.status = 200;
             ctx.body = events;
-        } else {
-            // return a BAD REQUEST status code and error message
-            ctx.status = 404;
-        }
-    }
-
-    public static async test(ctx: BaseContext) {
-        // get a user repository to perform operations with user
-        const gatheringRepository: Repository<Gathering> = getManager().getRepository(Gathering);
-        // load user by id
-        const upperDate = moment().add(0, 'months').format('YYYY-MM-DD');
-
-        const gathering: Gathering = await gatheringRepository.find({
-            where: {
-                rangeDate: Raw(
-                    (alias) => `'(${lowerRange}, ${upperRange})'::daterange @> ${alias}`,
-                ),
-            },
-        });
-
-        if (gathering) {
-            // return OK status code and loaded user object
-            ctx.status = 200;
-            ctx.body = gathering;
         } else {
             // return a BAD REQUEST status code and error message
             ctx.status = 404;

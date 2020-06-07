@@ -21,60 +21,60 @@ import { GatheringHistory } from './GatheringHistory';
 @Unique(['userID'])
 export class User {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('text', { name: 'userID' })
     @Length(5, 20)
-    userID: string;
+    userID: string | undefined;
 
     @Column('text')
-    name: string;
+    name: string | undefined;
 
     @Column('text', { select: false })
-    hashedPassword: string;
+    hashedPassword: string | undefined;
 
     @Column('text')
     @Length(5, 100)
     @IsEmail()
-    email: string;
+    email: string | undefined;
 
     @Column('text')
     @Length(10, 12)
-    phone: string;
+    phone: string | undefined;
 
     @Column('date', { nullable: true })
-    birth: string;
+    birth: string | undefined;
 
     @Column('text', { nullable: true })
-    gender: string;
+    gender: string | undefined;
 
     @OneToMany((type) => Address, (address) => address.user)
-    address: Address[];
+    address: Address[] | undefined;
 
     @Column('int', { nullable: true })
-    credit: number;
+    credit: number | undefined;
 
     @Column('json', { nullable: true })
-    cart: object;
+    cart: object | undefined;
 
     @OneToMany((type) => OrderHistory, (orderHistory) => orderHistory.user)
-    orderHistories: OrderHistory[];
+    orderHistories: OrderHistory[] | undefined;
 
     @ManyToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.users)
-    packageSubscs: PackageSubsc[];
+    packageSubscs: PackageSubsc[] | undefined;
 
     @OneToMany((type) => PackageHistory, (packageHistory) => packageHistory.user)
-    packageHistories: PackageHistory[];
+    packageHistories: PackageHistory[] | undefined;
 
     @ManyToMany((type) => GatheringSubsc, (gatheringSubsc) => gatheringSubsc.users)
-    gatheringSubscs: GatheringSubsc[];
+    gatheringSubscs: GatheringSubsc[] | undefined;
 
     @OneToMany((type) => GatheringHistory, (gatheringHistory) => gatheringHistory.user)
-    gatheringHistories: GatheringHistory[];
+    gatheringHistories: GatheringHistory[] | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

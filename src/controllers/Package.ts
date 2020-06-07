@@ -1,10 +1,9 @@
-import { BaseContext } from 'koa';
 import { getManager, Repository, Between } from 'typeorm';
 
 import { Package } from '../models/Package';
 
 export default class PackageController {
-    public static async getPackages(ctx: BaseContext, next: any) {
+    public static async getPackages(ctx: any, next: any) {
         try {
             //get a user repository to perform operations with user
             const packageRepository: Repository<Package> = getManager().getRepository(Package);
@@ -58,11 +57,11 @@ export default class PackageController {
         }
     }
 
-    public static async getPackageID(ctx: BaseContext) {
+    public static async getPackageID(ctx: any) {
         // get a user repository to perform operations with user
         const packageRepository: Repository<Package> = getManager().getRepository(Package);
         // load user by id
-        const singlePackage: Package = await packageRepository.findOne({
+        const singlePackage: Package | undefined = await packageRepository.findOne({
             join: {
                 alias: 'package',
                 leftJoinAndSelect: {
@@ -89,7 +88,7 @@ export default class PackageController {
         }
     }
 
-    public static async getPackageMonthly(ctx: BaseContext) {
+    public static async getPackageMonthly(ctx: any) {
         // get a user repository to perform operations with user
         const packageRepository: Repository<Package> = getManager().getRepository(Package);
 
@@ -103,7 +102,7 @@ export default class PackageController {
 
         const date = year + '-' + monthStr + '-' + '01';
         // load user by id
-        const singlePackage: Package = await packageRepository.findOne({
+        const singlePackage: Package | undefined = await packageRepository.findOne({
             join: {
                 alias: 'package',
                 leftJoinAndSelect: {

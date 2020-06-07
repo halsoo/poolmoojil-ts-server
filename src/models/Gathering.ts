@@ -18,7 +18,7 @@ import { Place } from './Place';
 @Entity('gatherings')
 export class Gathering {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Image, {
         nullable: true,
@@ -27,65 +27,65 @@ export class Gathering {
         primary: false,
     })
     @JoinColumn()
-    mainImg: Image;
+    mainImg: Image | undefined;
 
     @Column('text')
-    title: string;
+    title: string | undefined;
 
     @Column('int', { nullable: true })
-    count: number;
+    count: number | undefined;
 
     @Column('money', { nullable: true })
-    oncePrice: number;
+    oncePrice: number | undefined;
 
     @Column('money', { nullable: true })
-    fullPrice: number;
+    fullPrice: number | undefined;
 
     @Column('daterange', { nullable: true })
-    rangeDate: string;
+    rangeDate: string | undefined;
 
     @Column('date', { nullable: true })
-    oneTimeDate: string;
+    oneTimeDate: string | undefined;
 
     @Column('time', { nullable: true })
-    time: string;
+    time: string | undefined;
 
     @Column('text', { nullable: true })
-    stringDate: string;
+    stringDate: string | undefined;
 
     @Column('boolean', { nullable: true })
-    isAll: boolean;
+    isAll: boolean | undefined;
 
     @Column('boolean', { nullable: true })
-    isOver: boolean;
+    isOver: boolean | undefined;
 
     @ManyToOne((type) => Place, (place) => place.gatherings, {
         cascade: true,
         onDelete: 'SET NULL',
         primary: false,
     })
-    place: Place;
+    place: Place | undefined;
 
     @Column('text')
-    category: string;
+    category: string | undefined;
 
     @Column('text')
-    format: string;
+    format: string | undefined;
 
     @Column('text', { nullable: true })
-    speaker: string;
+    speaker: string | undefined;
 
     @ManyToMany((type) => Book, (book) => book.gatherings, {
-        nullabel: true,
+        nullable: true,
         cascade: true,
         onDelete: 'SET NULL',
         primary: false,
     })
     @JoinTable()
-    books: Book[];
+    books: Book[] | undefined;
 
     @Column('text')
-    desc: string;
+    desc: string | undefined;
 
     @OneToOne((type) => Image, {
         nullable: true,
@@ -94,14 +94,14 @@ export class Gathering {
         primary: false,
     })
     @JoinColumn()
-    additionalImg: Image[];
+    additionalImg: Image[] | undefined;
 
     @Column('text', { nullable: true })
-    liveLink: string;
+    liveLink: string | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

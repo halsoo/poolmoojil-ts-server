@@ -16,11 +16,11 @@ import { Package } from './Package';
 @Entity('packageSubscs')
 export class PackageSubsc {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Package)
     @JoinColumn()
-    package: Package;
+    package: Package | undefined;
 
     @ManyToMany((type) => User, (user) => user.packageSubscs, {
         cascade: true,
@@ -28,14 +28,14 @@ export class PackageSubsc {
         primary: true,
     })
     @JoinTable()
-    users: User[];
+    users: User[] | undefined;
 
     @Column('daterange', { nullable: true })
-    packagePeriod: Date;
+    packagePeriod: Date | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

@@ -1,5 +1,4 @@
-const SECRET = process.env.SECRET_KEY;
-import { BaseContext } from 'koa';
+const SECRET: any = process.env.SECRET_KEY;
 const Cookies = require('cookies');
 import bcrypt from 'bcrypt';
 import { getManager, Repository, Not, Equal } from 'typeorm';
@@ -19,7 +18,7 @@ export default class UserController {
         return generateToken(payload);
     }
 
-    public static async getUsers(ctx: BaseContext, next: any) {
+    public static async getUsers(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
@@ -29,11 +28,11 @@ export default class UserController {
         ctx.body = users;
     }
 
-    public static async getUserCookie(ctx: BaseContext, next: any) {
+    public static async getUserCookie(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        const user: User = await userRepository.findOne({
+        const user: User | undefined = await userRepository.findOne({
             join: {
                 alias: 'user',
                 leftJoinAndSelect: {
@@ -47,11 +46,11 @@ export default class UserController {
         ctx.body = user;
     }
 
-    public static async getUser(ctx: BaseContext) {
+    public static async getUser(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
-        const user: User = await userRepository.findOne({ userID: ctx.params.id });
+        const user: User | undefined = await userRepository.findOne({ userID: ctx.params.id });
 
         if (user) {
             // return OK status code and loaded user object
@@ -61,11 +60,11 @@ export default class UserController {
             ctx.status = 200;
         }
     }
-    public static async getEmail(ctx: BaseContext) {
+    public static async getEmail(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
-        const user: User = await userRepository.findOne({ email: ctx.params.email });
+        const user: User | undefined = await userRepository.findOne({ email: ctx.params.email });
 
         if (user) {
             // return OK status code and loaded user object
@@ -75,7 +74,7 @@ export default class UserController {
             ctx.status = 200;
         }
     }
-    public static async createUser(ctx: BaseContext) {
+    public static async createUser(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         const addressRepository: Repository<Address> = getManager().getRepository(Address);
@@ -130,11 +129,11 @@ export default class UserController {
             ctx.status = 201;
         }
     }
-    public static async updateUser(ctx: BaseContext) {
+    public static async updateUser(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load the user by id
-        const renewUser: User = await userRepository.findOne(ctx.params.id);
+        const renewUser: User | undefined | any = await userRepository.findOne(ctx.params.id);
         // return a BAD REQUEST status code and error message if the user cannot be found
         if (!renewUser) {
             ctx.status = 400;
@@ -177,11 +176,13 @@ export default class UserController {
             ctx.body = user;
         }
     }
-    public static async deleteUser(ctx: BaseContext) {
+    public static async deleteUser(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load the user by id
-        const userToRemove: User = await userRepository.findOne(ctx.request.body.userID);
+        const userToRemove: User | undefined = await userRepository.findOne(
+            ctx.request.body.userID,
+        );
         if (!userToRemove) {
             // return a BAD REQUEST status code and error message
             ctx.status = 400;
@@ -194,11 +195,11 @@ export default class UserController {
         }
     }
 
-    public static async logIn(ctx: BaseContext) {
+    public static async logIn(ctx: any) {
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load user by id
         const target = ctx.request.body;
-        const user: User = await userRepository.findOne({
+        const user: User | any = await userRepository.findOne({
             select: ['id', 'email', 'userID', 'hashedPassword'],
             where: { userID: target.userID },
         });
@@ -230,7 +231,7 @@ export default class UserController {
         }
     }
 
-    public static async logOut(ctx: BaseContext) {
+    public static async logOut(ctx: any) {
         ctx.cookies.set('access_token', null, {
             maxAge: 0,
             httpOnly: true,
@@ -238,11 +239,11 @@ export default class UserController {
         ctx.status = 204;
     }
 
-    public static async cartIn(ctx: BaseContext, next: any) {
+    public static async cartIn(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        const user: User = await userRepository.findOne({
+        const user: User | any = await userRepository.findOne({
             where: { id: ctx.request.user.id },
         });
 
@@ -261,11 +262,11 @@ export default class UserController {
         ctx.status = 200;
     }
 
-    public static async cartOut(ctx: BaseContext, next: any) {
+    public static async cartOut(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        const user: User = await userRepository.findOne({
+        const user: User | any = await userRepository.findOne({
             where: { id: ctx.request.user.id },
         });
 
@@ -280,11 +281,11 @@ export default class UserController {
         ctx.status = 200;
     }
 
-    public static async getCart(ctx: BaseContext, next: any) {
+    public static async getCart(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        const user: User = await userRepository.findOne({
+        const user: User | any = await userRepository.findOne({
             where: { id: ctx.request.user.id },
         });
         // return OK status code and loaded users array

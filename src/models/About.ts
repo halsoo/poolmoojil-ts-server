@@ -9,29 +9,29 @@ import {
 @Entity('abouts')
 export class About {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('boolean', { nullable: true })
-    isShow: boolean;
+    isShow: boolean | undefined;
 
     @Column('text')
-    title: string;
+    title: string | undefined;
 
     @Column('text')
-    body: string;
+    body: string | undefined;
 
     @Column('text', { nullable: true })
-    emphasis: string;
+    emphasis: string | undefined;
 
     @Column('text', { nullable: true })
-    date: string;
+    date: string | undefined;
 
     @Column('text', { nullable: true })
-    writer: string;
+    writer: string | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

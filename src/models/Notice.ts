@@ -14,14 +14,14 @@ import { Image } from './Image';
 @Entity('notices')
 export class Notice {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('text')
     @Length(100)
-    title: string;
+    title: string | undefined;
 
     @Column('text')
-    desc: string;
+    desc: string | undefined;
 
     @OneToOne((type) => Image, {
         nullable: true,
@@ -30,11 +30,11 @@ export class Notice {
         primary: false,
     })
     @JoinColumn()
-    img: Image;
+    img: Image | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

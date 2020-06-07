@@ -1,17 +1,16 @@
-import { BaseContext } from 'koa';
 import { getManager, Repository, Like, Between } from 'typeorm';
 
 import { Book } from '../models/Book';
 import { MonthlyCuration } from '../models/MonthlyCuration';
 
 export default class BookController {
-    public static async getBooks(ctx: BaseContext, next: any) {
+    public static async getBooks(ctx: any, next: any) {
         try {
             //get a user repository to perform operations with user
             const bookRepository: Repository<Book> = getManager().getRepository(Book);
 
             const req = ctx.request.body;
-            const where = {};
+            const where: any = {};
 
             if (req.title !== undefined) where.title = Like(req.title);
             if (req.type !== undefined) where.type = req.type;
@@ -33,11 +32,11 @@ export default class BookController {
         }
     }
 
-    public static async getBookID(ctx: BaseContext) {
+    public static async getBookID(ctx: any) {
         // get a user repository to perform operations with user
         const bookRepository: Repository<Book> = getManager().getRepository(Book);
         // load user by id
-        const book: Book = await bookRepository.findOne({
+        const book: Book | undefined = await bookRepository.findOne({
             join: {
                 alias: 'book',
                 leftJoinAndSelect: {
@@ -59,7 +58,7 @@ export default class BookController {
         }
     }
 
-    public static async getBookCurated(ctx: BaseContext) {
+    public static async getBookCurated(ctx: any) {
         // get a user repository to perform operations with user
         const curationRepository: Repository<MonthlyCuration> = getManager().getRepository(
             MonthlyCuration,
@@ -100,7 +99,7 @@ export default class BookController {
 
         const lowerDate = lowerYear.toString() + '-' + lowerMonthStr + '-' + '02';
         // load user by id
-        const curation: MonthlyCuration = await curationRepository.find({
+        const curation: MonthlyCuration[] = await curationRepository.find({
             join: {
                 alias: 'monthlyCuration',
                 leftJoinAndSelect: {
@@ -126,14 +125,14 @@ export default class BookController {
         }
     }
 
-    public static async getBookSelected(ctx: BaseContext) {
+    public static async getBookSelected(ctx: any) {
         // get a user repository to perform operations with user
         const bookRepository: Repository<Book> = getManager().getRepository(Book);
         // load user by id
 
         const req = ctx.request.body;
 
-        const books: Book = await bookRepository.find({
+        const books: Book[] = await bookRepository.find({
             join: {
                 alias: 'book',
                 leftJoinAndSelect: {

@@ -14,7 +14,7 @@ import { Good } from './Good';
 @Entity('monthlyCuration')
 export class MonthlyCuration {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @ManyToMany((type) => Book, {
         nullable: true,
@@ -23,7 +23,7 @@ export class MonthlyCuration {
         primary: false,
     })
     @JoinTable()
-    book: Book[];
+    book: Book[] | undefined;
 
     @ManyToMany((type) => Good, {
         nullable: true,
@@ -32,14 +32,14 @@ export class MonthlyCuration {
         primary: false,
     })
     @JoinTable()
-    good: Good[];
+    good: Good[] | undefined;
 
     @Column('date', { nullable: true })
-    date: Date;
+    date: string | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

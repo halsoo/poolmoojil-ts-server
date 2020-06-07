@@ -14,13 +14,13 @@ import { Good } from './Good';
 @Entity('images')
 export class Image {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('text')
-    name: string;
+    name: string | undefined;
 
     @Column('text')
-    link: string;
+    link: string | undefined;
 
     @ManyToOne((type) => Book, (book) => book.additionalImg, {
         nullable: true,
@@ -29,7 +29,7 @@ export class Image {
         primary: false,
     })
     @JoinColumn()
-    book: Book;
+    book: Book | undefined;
 
     @ManyToOne((type) => Good, (good) => good.additionalImg, {
         nullable: true,
@@ -38,8 +38,8 @@ export class Image {
         primary: false,
     })
     @JoinColumn()
-    good: Good;
+    good: Good | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 }

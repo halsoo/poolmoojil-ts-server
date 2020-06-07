@@ -14,7 +14,7 @@ import { Image } from './Image';
 @Entity('goods')
 export class Good {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Image, {
         nullable: true,
@@ -23,44 +23,44 @@ export class Good {
         primary: false,
     })
     @JoinColumn()
-    mainImg: Image;
+    mainImg: Image | undefined;
 
     @Column('text')
-    name: string;
+    name: string | undefined;
 
     @Column('text', { nullable: true })
-    type: string;
+    type: string | undefined;
 
     @Column('int', { nullable: true })
-    quantity: number;
+    quantity: number | undefined;
 
     @Column('money')
-    price: number;
+    price: number | undefined;
 
     @Column('text', { nullable: true })
-    maker: string;
+    maker: string | undefined;
 
     @Column('text', { nullable: true })
-    designer: string;
+    designer: string | undefined;
 
     @Column('text', { nullable: true })
-    dimensions: string;
+    dimensions: string | undefined;
 
     @Column('text', { nullable: true })
-    color: string;
+    color: string | undefined;
 
     @Column('text', { nullable: true })
-    desc: string;
+    desc: string | undefined;
 
     @OneToMany((type) => Image, (image) => image.good, {
         nullable: true,
     })
     @JoinColumn()
-    additionalImg: Image[];
+    additionalImg: Image[] | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

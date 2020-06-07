@@ -13,35 +13,35 @@ import { User } from './User';
 @Entity('addresses')
 export class Address {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @ManyToOne((type) => User, (user) => user.address, {
         cascade: true,
         onDelete: 'CASCADE',
         primary: true,
     })
-    user: User;
+    user: User | undefined;
 
     @Column('text')
     @Length(1, 100)
-    name: string;
+    name: string | undefined;
 
     @Column('text')
     @Length(5, 6)
-    zip: string;
+    zip: string | undefined;
 
     @Column('text', { nullable: true })
-    addressA: string;
+    addressA: string | undefined;
 
     @Column('text', { nullable: true })
-    addressB: string;
+    addressB: string | undefined;
 
     @Column('boolean', { nullable: true })
-    isIslandMountainousArea: boolean;
+    isIslandMountainousArea: boolean | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

@@ -16,10 +16,10 @@ import { Gathering } from './Gathering';
 @Entity('gatheringSubscs')
 export class GatheringSubsc {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('int', { nullable: true })
-    count: number;
+    count: number | undefined;
 
     @OneToOne((type) => Gathering, {
         cascade: true,
@@ -27,7 +27,7 @@ export class GatheringSubsc {
         primary: false,
     })
     @JoinColumn()
-    gathering: Gathering;
+    gathering: Gathering | undefined;
 
     @ManyToMany((type) => User, (user) => user.gatheringSubscs, {
         cascade: true,
@@ -35,14 +35,14 @@ export class GatheringSubsc {
         primary: true,
     })
     @JoinTable()
-    users: User[];
+    users: User[] | undefined;
 
     @Column('daterange', { nullable: true })
-    gatheringPeriod: Date;
+    gatheringPeriod: string | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

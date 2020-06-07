@@ -16,7 +16,7 @@ import { Gathering } from './Gathering';
 @Entity('gatheringHistories')
 export class GatheringHistory {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Gathering, {
         cascade: true,
@@ -24,25 +24,25 @@ export class GatheringHistory {
         primary: false,
     })
     @JoinColumn()
-    gathering: Gathering;
+    gathering: Gathering | undefined;
 
     @ManyToOne((type) => User, (user) => user.gatheringHistories, {
         cascade: true,
         onDelete: 'SET NULL',
         primary: true,
     })
-    user: User;
+    user: User | undefined;
 
     @Column('int', { nullable: true })
     @Max(3)
-    headCount: number;
+    headCount: number | undefined;
 
     @Column('timestamp')
-    purchaseDate: Date;
+    purchaseDate: Date | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

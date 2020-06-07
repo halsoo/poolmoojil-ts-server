@@ -16,7 +16,7 @@ import { Gathering } from './Gathering';
 @Entity('books')
 export class Book {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @OneToOne((type) => Image, {
         nullable: true,
@@ -25,67 +25,67 @@ export class Book {
         primary: false,
     })
     @JoinColumn()
-    mainImg: Image;
+    mainImg: Image | undefined;
 
     @Column('text', { nullable: true })
-    type: string;
+    type: string | undefined;
 
     @Column('int', { nullable: true })
-    quantity: number;
+    quantity: number | undefined;
 
     @Column('text')
-    title: string;
+    title: string | undefined;
 
     @Column('text')
-    author: string;
+    author: string | undefined;
 
     @Column('text', { nullable: true })
-    translator: string;
+    translator: string | undefined;
 
     @Column('text')
-    publishingCompany: string;
+    publishingCompany: string | undefined;
 
     @Column('int')
-    pages: number;
+    pages: number | undefined;
 
     @Column('money')
-    price: number;
+    price: number | undefined;
 
     @Column('text', { nullable: true })
-    editor: string;
+    editor: string | undefined;
 
     @Column('text', { nullable: true })
-    designer: string;
+    designer: string | undefined;
 
     @Column('text', { nullable: true })
-    publisher: string;
+    publisher: string | undefined;
 
     @Column('date', { nullable: true })
-    publishDate: string;
+    publishDate: string | undefined;
 
     @Column('text', { nullable: true })
-    ISBN: string;
+    ISBN: string | undefined;
 
     @Column('text', { nullable: true })
-    dimensions: string;
+    dimensions: string | undefined;
 
     @Column('text', { nullable: true })
-    weights: string;
+    weights: string | undefined;
 
     @Column('text', { nullable: true })
-    desc: string;
+    desc: string | undefined;
 
     @ManyToMany((type) => Gathering, (gathering) => gathering.books, { nullable: true })
-    gatherings: Gathering[];
+    gatherings: Gathering[] | undefined;
 
     @OneToMany((type) => Image, (image) => image.book, {
         nullable: true,
     })
-    additionalImg: Image[];
+    additionalImg: Image[] | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

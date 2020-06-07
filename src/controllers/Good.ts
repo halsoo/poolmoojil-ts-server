@@ -1,10 +1,9 @@
-import { BaseContext } from 'koa';
 import { getManager, Repository, Between } from 'typeorm';
 
 import { Good } from '../models/Good';
 
 export default class GoodController {
-    public static async getGoods(ctx: BaseContext, next: any) {
+    public static async getGoods(ctx: any, next: any) {
         try {
             //get a user repository to perform operations with user
             const goodRepository: Repository<Good> = getManager().getRepository(Good);
@@ -24,11 +23,11 @@ export default class GoodController {
         }
     }
 
-    public static async getGoodID(ctx: BaseContext) {
+    public static async getGoodID(ctx: any) {
         // get a user repository to perform operations with user
         const goodRepository: Repository<Good> = getManager().getRepository(Good);
         // load user by id
-        const good: Good = await goodRepository.findOne({
+        const good: Good | undefined = await goodRepository.findOne({
             join: {
                 alias: 'good',
                 leftJoinAndSelect: {

@@ -18,17 +18,17 @@ import { Good } from './Good';
 @Entity('orderHistories')
 export class OrderHistory {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @ManyToOne((type) => User, (user) => user.orderHistories, {
         cascade: true,
         onDelete: 'SET NULL',
         primary: true,
     })
-    user: User;
+    user: User | undefined;
 
     @Column('boolean')
-    isBook: boolean;
+    isBook: boolean | undefined;
 
     @ManyToMany((type) => Book, {
         nullable: true,
@@ -37,7 +37,7 @@ export class OrderHistory {
         primary: true,
     })
     @JoinTable()
-    books: Book[];
+    books: Book[] | undefined;
 
     @ManyToMany((type) => Good, {
         nullable: true,
@@ -46,23 +46,23 @@ export class OrderHistory {
         primary: true,
     })
     @JoinTable()
-    goods: Good[];
+    goods: Good[] | undefined;
 
     @Column('text', { nullable: true })
-    additionalAddress: string;
+    additionalAddress: string | undefined;
 
     @Column('text', { nullable: true })
-    transactionStatus: string;
+    transactionStatus: string | undefined;
 
     @Column('int', { nullable: true })
-    creditUse: number;
+    creditUse: number | undefined;
 
     @Column('money', { nullable: true })
-    totalPrice: number;
+    totalPrice: number | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }

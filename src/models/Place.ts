@@ -13,57 +13,57 @@ import { Gathering } from './Gathering';
 @Entity('places')
 export class Place {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: string | undefined;
 
     @Column('text')
     @Length(100)
-    name: string;
+    name: string | undefined;
 
     @Column('text')
-    address: string;
+    address: string | undefined;
 
     @Column('text', { nullable: true })
-    subAddress: string;
+    subAddress: string | undefined;
 
     @Column('text', { nullable: true })
-    weekday: string;
+    weekday: string | undefined;
 
     @Column('time', { nullable: true })
-    weekdayOpen: string;
+    weekdayOpen: string | undefined;
 
     @Column('time', { nullable: true })
-    weekdayClose: string;
+    weekdayClose: string | undefined;
 
     @Column('text', { nullable: true })
-    shortday: string;
+    shortday: string | undefined;
 
     @Column('time', { nullable: true })
-    shortdayOpen: string;
+    shortdayOpen: string | undefined;
 
     @Column('time', { nullable: true })
-    shortdayClose: string;
+    shortdayClose: string | undefined;
 
     @Column('text', { nullable: true })
-    closing: string;
+    closing: string | undefined;
 
     @Column('text', { nullable: true })
-    phone: string;
+    phone: string | undefined;
 
     @Column('text', { nullable: true })
-    fax: string;
+    fax: string | undefined;
 
     @Column('text', { nullable: true })
-    insta: string;
+    insta: string | undefined;
 
     @Column('text', { nullable: true })
-    email: string;
+    email: string | undefined;
 
     @OneToMany((type) => Gathering, (gathering) => gathering.place, { nullable: true })
-    gatherings: Gathering[];
+    gatherings: Gathering[] | undefined;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date | undefined;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date | undefined;
 }
