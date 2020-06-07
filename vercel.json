@@ -2,10 +2,16 @@
     "name": "poolmoojil",
     "public": true,
     "version": 2,
+    "builds": [
+        {
+            "src": "src/**/*.ts",
+            "use": "@now/node"
+        }
+    ],
     "routes": [
         {
             "src": "/.",
-            "dest": "app.js"
+            "dest": "dist/app.js"
         }
     ]
 }
