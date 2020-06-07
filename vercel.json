@@ -8,7 +8,7 @@
             "use": "@now/node"
         }
     ],
-    "routs": [
+    "routes": [
         {
             "src": "/",
             "dest": "dist/app.js"
