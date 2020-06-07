@@ -3,4 +3,7 @@ import { apiRouter } from './api-router';
 
 export const basicRouter = new Router();
 
-basicRouter.use('api', apiRouter.routes());
+basicRouter.get('/', (ctx: any, next) => {
+    ctx.body = "it's alive!";
+    next();
+});

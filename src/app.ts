@@ -16,17 +16,17 @@ const mount = require('koa-mount');
 const app = new Koa();
 const router = new Router();
 
-const staticPages = new Koa();
-staticPages.use(koaStatic(path.join(__dirname, '../', '/frontend')));
+//const staticPages = new Koa();
+// staticPages.use(koaStatic(path.join(__dirname, '../', '/frontend')));
 
-app.use(async (ctx: any, next: any) => {
-    if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
-        ctx.request.path = '/';
-    }
-    await next();
-});
+// app.use(async (ctx: any, next: any) => {
+//     if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
+//         ctx.request.path = '/';
+//     }
+//     await next();
+// });
 
-app.use(mount('/', staticPages));
+//app.use(mount('/', staticPages));
 
 const PORT = process.env.PORT || 4000;
 
