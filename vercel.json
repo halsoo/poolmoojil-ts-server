@@ -4,7 +4,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "src/app.js",
+            "src": "src/app.ts",
             "use": "@now/node"
         }
     ],
