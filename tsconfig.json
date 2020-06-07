@@ -1,6 +1,6 @@
 {
     "include": ["src/**/*.ts"],
-    "exclude": ["node_modules", "src/databases/migration/*"],
+    "exclude": ["node_modules", "src/qa/*.ts", "src/databases/migration/*"],
     "compileOnSave": false,
     "compilerOptions": {
         "moduleResolution": "node",
