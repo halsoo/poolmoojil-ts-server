@@ -52,7 +52,7 @@
         "watch": "tsc -w",
         "watch-start": "concurrently --kill-others \"tsc --watch\" \"nodemon dist/app.js\"",
         "start": "node dist/app.js",
-        "now-start": "node app.js",
+        "now-start": "node dist/app.js",
         "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
     }
 }
