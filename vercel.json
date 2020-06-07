@@ -4,13 +4,13 @@
     "version": 2,
     "builds": [
         {
-            "src": "src/**/*.ts",
+            "src": "src/app.ts",
             "use": "@now/node-server"
         }
     ],
     "routes": [
         {
-            "src": "/api",
+            "src": "/",
             "dest": "dist/app.js"
         }
     ]
