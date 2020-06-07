@@ -33,7 +33,6 @@ export default class UserController {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         // load all users
-        console.log(ctx.request.user);
         const user: User = await userRepository.findOne({
             join: {
                 alias: 'user',
@@ -203,7 +202,6 @@ export default class UserController {
             select: ['id', 'email', 'userID', 'hashedPassword'],
             where: { userID: target.userID },
         });
-        console.log(user);
         if (user) {
             if (
                 user.userID === target.userID &&
@@ -238,5 +236,59 @@ export default class UserController {
             httpOnly: true,
         });
         ctx.status = 204;
+    }
+
+    public static async cartIn(ctx: BaseContext, next: any) {
+        //get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load all users
+        const user: User = await userRepository.findOne({
+            where: { id: ctx.request.user.id },
+        });
+
+        if (user.cart === null) {
+            user.cart = {};
+        }
+
+        user.cart[ctx.request.body.id] = {
+            quantity: ctx.request.body.quantity,
+            category: ctx.request.body.category,
+        };
+
+        const savedUser = await userRepository.save(user);
+        // return OK status code and loaded users array
+
+        ctx.status = 200;
+    }
+
+    public static async cartOut(ctx: BaseContext, next: any) {
+        //get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load all users
+        const user: User = await userRepository.findOne({
+            where: { id: ctx.request.user.id },
+        });
+
+        const userCart = user.cart;
+
+        delete userCart[ctx.request.body.id];
+
+        user.cart = { ...userCart };
+
+        const savedUser = await userRepository.save(user);
+        // return OK status code and loaded users array
+        ctx.status = 200;
+    }
+
+    public static async getCart(ctx: BaseContext, next: any) {
+        //get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load all users
+        const user: User = await userRepository.findOne({
+            where: { id: ctx.request.user.id },
+        });
+        // return OK status code and loaded users array
+        ctx.status = 200;
+        ctx.body = user.cart;
     }
 }

@@ -54,6 +54,9 @@ export class User {
     @Column('int', { nullable: true })
     credit: number;
 
+    @Column('json', { nullable: true })
+    cart: object;
+
     @OneToMany((type) => OrderHistory, (orderHistory) => orderHistory.user)
     orderHistories: OrderHistory[];
 

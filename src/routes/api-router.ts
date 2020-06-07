@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import axios from 'axios';
 import createTestData = require('../qa/createTestData');
 
 import { getConnection, Connection, AdvancedConsoleLogger } from 'typeorm';
@@ -13,11 +14,9 @@ import { NoticeRouter } from './notice-router';
 import { About } from '../models/About';
 import { Place } from '../models/Place';
 
-export const apiRouter = new Router();
+const addressKey = process.env.ADDRESS_KEY;
 
-apiRouter.get('/', (ctx, next) => {
-    ctx.body = 'api';
-});
+export const apiRouter = new Router();
 
 apiRouter.use('/users', LogRouter.routes());
 apiRouter.use('/gathering', GatheringRouter.routes());
@@ -25,6 +24,24 @@ apiRouter.use('/package', PackageRouter.routes());
 apiRouter.use('/book', BookRouter.routes());
 apiRouter.use('/good', GoodRouter.routes());
 apiRouter.use('/notice', NoticeRouter.routes());
+
+apiRouter.post('/getaddress', async (ctx, next) => {
+    try {
+        const req = ctx.request.body;
+        console.log(req);
+        const res = await axios.get(
+            `http://www.juso.go.kr/addrlink/addrLinkApi.do?confmKey=${addressKey}&currentPage=${
+                req.page
+            }&countPerPage=5&keyword=${encodeURI(req.query)}&resultType=json`,
+        );
+        ctx.body = res.data;
+    } catch (err) {
+        ctx.status = 500;
+        console.log(err);
+    }
+
+    next();
+});
 
 apiRouter.get('/aboutTexts', async (ctx, next) => {
     try {
@@ -63,15 +80,15 @@ apiRouter.get('/places', async (ctx, next) => {
     await next();
 });
 
-// apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
-//apiRouter.post('/books', createTestData.TestData.createTestBooks);
+apiRouter.post('/gatherings', createTestData.TestData.createTestGatherings);
+apiRouter.post('/books', createTestData.TestData.createTestBooks);
 apiRouter.post('/updateBook', createTestData.TestData.updateTestBooks);
 
 apiRouter.post('/curation', createTestData.TestData.createTestCuration);
 
-// apiRouter.post('/places', createTestData.TestData.createPlaces);
-// apiRouter.post('/aboutTexts', createTestData.TestData.createAboutTexts);
+apiRouter.post('/places', createTestData.TestData.createPlaces);
+apiRouter.post('/aboutTexts', createTestData.TestData.createAboutTexts);
 apiRouter.post('/testImages', createTestData.TestData.createTestImages);
-// apiRouter.post('/goods', createTestData.TestData.createTestGoods);
+apiRouter.post('/goods', createTestData.TestData.createTestGoods);
 apiRouter.post('/testPackages', createTestData.TestData.createTestPackages);
 apiRouter.post('/testNotices', createTestData.TestData.createNotices);

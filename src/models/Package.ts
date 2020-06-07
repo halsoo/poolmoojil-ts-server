@@ -53,6 +53,9 @@ export class Package {
     @JoinTable()
     goodList: Good[];
 
+    @Column('text', {nullable: true})
+    packageList: string;
+
     @OneToOne((type) => Image, { nullable: true, cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
     additionalImg: Image;

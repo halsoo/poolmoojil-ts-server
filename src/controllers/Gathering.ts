@@ -209,8 +209,6 @@ export default class GatheringController {
             },
         });
 
-        console.log(gathering);
-
         if (gathering) {
             // return OK status code and loaded user object
             ctx.status = 200;

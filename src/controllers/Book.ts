@@ -82,7 +82,7 @@ export default class BookController {
         let lowerMonth = 0;
 
         const offset = req.page * req.offset;
-        console.log(req.page, req.offset);
+
         const monthOffset = offset % 12;
         const yearOffset = Math.floor(offset / 12);
 
