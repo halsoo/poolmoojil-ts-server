@@ -1,6 +1,4 @@
 {
-    "name": "poolmoojil",
-    "public": true,
     "version": 2,
     "builds": [
         {
