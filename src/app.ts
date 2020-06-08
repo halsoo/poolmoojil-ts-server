@@ -2,7 +2,7 @@ require('dotenv').config();
 
 import { postgresDB } from './databases/postgres-db';
 import { apiRouter } from './routes/api-router';
-import REACT_ROUTER_PATH from './routes/react-path';
+//import REACT_ROUTER_PATH from './routes/react-path';
 import { jwtMiddleware } from './lib/token';
 
 const path = require('path');

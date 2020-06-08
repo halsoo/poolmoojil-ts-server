@@ -59,7 +59,7 @@ export class Place {
     email: string | undefined;
 
     @OneToMany((type) => Gathering, (gathering) => gathering.place, { nullable: true })
-    gatherings: Gathering[] | undefined;
+    gatherings: Gathering[] | any;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

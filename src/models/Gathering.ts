@@ -64,7 +64,7 @@ export class Gathering {
         onDelete: 'SET NULL',
         primary: false,
     })
-    place: Place | undefined;
+    place: Place | any;
 
     @Column('text')
     category: string | undefined;

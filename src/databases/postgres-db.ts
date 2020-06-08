@@ -1,6 +1,12 @@
 import { createConnection } from 'typeorm';
 import { postgresTables } from './postgres-tables';
 
+// export const postgresDB = async () => {
+//     return await createConnection().then((connection) => {
+//         console.log('Database connection established');
+//     });
+// };
+
 export const postgresDB = async () => {
     return await createConnection({
         type: 'postgres',
@@ -11,7 +17,6 @@ export const postgresDB = async () => {
         database: 'poolmoojil',
         ssl: false,
         entities: postgresTables,
-        logging: ['query', 'error'],
         synchronize: true,
     }).then((connection) => {
         console.log('Database connection established');
