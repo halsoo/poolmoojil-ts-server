@@ -5,7 +5,7 @@
     "builds": [
         {
             "src": "now-entry.js",
-            "use": "@now/node-server",
+            "use": "@now/node",
             "config": {
                 "helpers": false,
                 "includeFiles": ["dist/**/*.js"]
