@@ -2,6 +2,7 @@ require('dotenv').config();
 
 import { postgresDB } from './databases/postgres-db';
 import { apiRouter } from './routes/api-router';
+import { basicRouter } from './routes/basic-router';
 //import REACT_ROUTER_PATH from './routes/react-path';
 import { jwtMiddleware } from './lib/token';
 
@@ -28,7 +29,7 @@ const router = new Router();
 
 //app.use(mount('/', staticPages));
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     credentials: true,
@@ -38,6 +39,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser());
 
 app.use(jwtMiddleware);
+router.use('/', basicRouter.routes());
 
 router.use('/api', apiRouter.routes());
 
@@ -50,3 +52,5 @@ const bootstrap = async () => {
 bootstrap();
 
 app.listen(PORT);
+
+export default app;

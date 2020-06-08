@@ -49,6 +49,7 @@
     },
     "scripts": {
         "build": "tsc --build",
+        "now-build": "npm run build",
         "watch": "tsc -w",
         "watch-start": "concurrently --kill-others \"tsc --watch\" \"nodemon dist/app.js\"",
         "start": "node dist/app.js",

@@ -14,7 +14,7 @@
     ],
     "routes": [
         {
-            "src": "/.",
+            "src": "/.*",
             "dest": "now-entry.js"
         }
     ]
