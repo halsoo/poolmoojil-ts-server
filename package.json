@@ -2,7 +2,7 @@
     "name": "poolmoojil",
     "version": "0.0.1",
     "description": "a web site and a E-store for the bookstore Poolmoojil",
-    "main": "dist/app.js",
+    "main": "now-entry.js",
     "repository": "https://github.com/halsoo/poolmoojil-ts-server.git",
     "author": "SakeMin, UKGU",
     "license": "MIT",
