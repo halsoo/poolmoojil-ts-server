@@ -8,7 +8,7 @@
             "use": "@now/node",
             "config": {
                 "helpers": false,
-                "includeFiles": ["dis/**/*.js"]
+                "includeFiles": ["dist/**/*.js"]
             }
         }
     ],
