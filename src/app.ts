@@ -2,8 +2,7 @@ require('dotenv').config();
 
 import { postgresDB } from './databases/postgres-db';
 import { apiRouter } from './routes/api-router';
-import { basicRouter } from './routes/basic-router';
-//import REACT_ROUTER_PATH from './routes/react-path';
+import REACT_ROUTER_PATH from './routes/react-path';
 import { jwtMiddleware } from './lib/token';
 
 const path = require('path');
@@ -17,17 +16,17 @@ const mount = require('koa-mount');
 const app = new Koa();
 const router = new Router();
 
-//const staticPages = new Koa();
-// staticPages.use(koaStatic(path.join(__dirname, '../', '/frontend')));
+const staticPages = new Koa();
+staticPages.use(koaStatic(path.join(__dirname, '../', '/frontend')));
 
-// app.use(async (ctx: any, next: any) => {
-//     if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
-//         ctx.request.path = '/';
-//     }
-//     await next();
-// });
+app.use(async (ctx: any, next: any) => {
+    if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
+        ctx.request.path = '/';
+    }
+    await next();
+});
 
-//app.use(mount('/', staticPages));
+app.use(mount('/', staticPages));
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,7 +38,6 @@ app.use(cors(corsOptions));
 app.use(bodyParser());
 
 app.use(jwtMiddleware);
-router.use('/', basicRouter.routes());
 
 router.use('/api', apiRouter.routes());
 
