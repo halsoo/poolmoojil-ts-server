@@ -2,16 +2,12 @@
     "name": "poolmoojil",
     "public": true,
     "version": 2,
-    "builds": [
-        {
-            "src": "now-entry.js",
-            "use": "@now/node",
-            "config": {
-                "helpers": false,
-                "includeFiles": ["dist/**/*.js"]
-            }
+    "functions": {
+        "now-entry.js": {
+            "runtime": "@now/node",
+            "includeFiles": "/dist/**/*.js"
         }
-    ],
+    },
     "routes": [
         {
             "src": "/.",
