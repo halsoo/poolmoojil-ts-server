@@ -17,7 +17,7 @@ const app = new Koa();
 const router = new Router();
 
 const staticPages = new Koa();
-staticPages.use(koaStatic(path.join(__dirname, '../', '/frontend')));
+staticPages.use(koaStatic(path.join(__dirname, '/frontend')));
 
 app.use(async (ctx: any, next: any) => {
     if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
@@ -50,5 +50,3 @@ const bootstrap = async () => {
 bootstrap();
 
 app.listen(PORT);
-
-export default app;

@@ -18,6 +18,15 @@ export default class UserController {
         return generateToken(payload);
     }
 
+    public static async admin(User: User) {
+        const payload = {
+            id: User.id,
+            userID: User.userID,
+        };
+
+        return generateToken(payload);
+    }
+
     public static async getUsers(ctx: any, next: any) {
         //get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
@@ -37,6 +46,18 @@ export default class UserController {
                 alias: 'user',
                 leftJoinAndSelect: {
                     address: 'user.address',
+                    orderHistories: 'user.orderHistories',
+                    orderBooks: 'orderHistories.books',
+                    orderGoods: 'orderHistories.goods',
+                    orderBooksMainImg: 'orderBooks.mainImg',
+                    orderGoodsMainImg: 'orderGoods.mainImg',
+                    packageHistories: 'user.packageHistories',
+                    historyPackage: 'packageHistories.package',
+                    historyPackageMainImg: 'historyPackage.mainImg',
+                    packageSubscs: 'user.packageSubscs',
+                    gatheringHistories: 'user.gatheringHistories',
+                    historyGathering: 'gatheringHistories.gathering',
+                    historyGatheringMainImg: 'historyGathering.mainImg',
                 },
             },
             where: { id: ctx.request.user.id },
@@ -87,7 +108,9 @@ export default class UserController {
         newUser.email = ctx.request.body.email;
         newUser.phone = ctx.request.body.phone;
         newUser.birth = ctx.request.body.birth;
+        newUser.credit = 0;
         newUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
+        newUser.newsLetter = ctx.request.body.newsLetter ? true : false;
 
         newAddress.user = newUser;
         newAddress.name = '기본';
@@ -129,24 +152,61 @@ export default class UserController {
             ctx.status = 201;
         }
     }
+
     public static async updateUser(ctx: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
+        const addressRepository: Repository<Address> = getManager().getRepository(Address);
         // load the user by id
-        const renewUser: User | undefined | any = await userRepository.findOne(ctx.params.id);
+        const renewUser: any = await userRepository.findOne({
+            join: {
+                alias: 'user',
+                leftJoinAndSelect: {
+                    address: 'user.address',
+                },
+            },
+            where: { id: ctx.request.user.id },
+        });
+
+        const oldAddress: any = await addressRepository.findOne({
+            join: {
+                alias: 'address',
+                leftJoinAndSelect: {
+                    user: 'address.user',
+                },
+            },
+            where: { userId: renewUser.id },
+        });
+
+        await addressRepository.remove(oldAddress);
+        const newAddress: Address = new Address();
         // return a BAD REQUEST status code and error message if the user cannot be found
         if (!renewUser) {
             ctx.status = 400;
             ctx.body = "The user you are trying to retrieve doesn't exist in the db";
         }
-        if (ctx.request.body.name) {
-            renewUser.name = ctx.request.body.name;
-        }
-        if (ctx.request.body.email) {
-            renewUser.email = ctx.request.body.email;
-        }
         if (ctx.request.body.password) {
-            renewUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, SECRET);
+            renewUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
+        }
+
+        if (ctx.request.body.phone) {
+            renewUser.phone = ctx.request.body.phone;
+        }
+
+        if (ctx.request.body.birth) {
+            renewUser.birth = ctx.request.body.birth;
+        }
+
+        if (ctx.request.body.newsLetter !== undefined) {
+            renewUser.newsLetter = ctx.request.body.newsLetter;
+        }
+
+        if (ctx.request.body.zipCode && ctx.request.body.addressA && ctx.request.body.addressB) {
+            newAddress.user = renewUser;
+            newAddress.name = '기본';
+            newAddress.zip = ctx.request.body.zipCode;
+            newAddress.addressA = ctx.request.body.addressA;
+            newAddress.addressB = ctx.request.body.addressB;
         }
         // validate user entity
         const errors: ValidationError[] = await validate(renewUser); // errors is an array of validation errors
@@ -154,26 +214,19 @@ export default class UserController {
             // return BAD REQUEST status code and errors array
             ctx.status = 400;
             ctx.body = errors;
-        } else if (!(await userRepository.findOne(renewUser.userID))) {
-            // check if a user with the specified id exists
-            // return a BAD REQUEST status code and error message
-            ctx.status = 400;
-            ctx.body = "The user you are trying to update doesn't exist in the db";
-        } else if (
-            await userRepository.findOne({
-                id: Not(Equal(renewUser.userID)),
-                email: renewUser.email,
-            })
-        ) {
-            // return BAD REQUEST status code and email already exists error
-            ctx.status = 400;
-            ctx.body = 'The specified e-mail address already exists';
         } else {
-            // save the user contained in the PUT body
-            const user = await userRepository.save(renewUser);
+            if (newAddress.user === renewUser) {
+                console.log('update address');
+                renewUser.address = [newAddress];
+                await addressRepository.save(newAddress);
+                await userRepository.save(renewUser);
+            } else {
+                console.log('solo save process');
+                await userRepository.save(renewUser);
+            }
+
             // return CREATED status code and updated user
             ctx.status = 201;
-            ctx.body = user;
         }
     }
     public static async deleteUser(ctx: any) {
@@ -200,7 +253,7 @@ export default class UserController {
         // load user by id
         const target = ctx.request.body;
         const user: User | any = await userRepository.findOne({
-            select: ['id', 'email', 'userID', 'hashedPassword'],
+            select: ['id', 'isAdmin', 'email', 'userID', 'hashedPassword'],
             where: { userID: target.userID },
         });
         if (user) {
@@ -208,6 +261,21 @@ export default class UserController {
                 user.userID === target.userID &&
                 (await bcrypt.compare(target.password, user.hashedPassword))
             ) {
+                if (user.isAdmin) {
+                    let admin = null;
+                    try {
+                        admin = await UserController.token(user);
+                    } catch (error) {
+                        ctx.status = 500;
+                    }
+
+                    ctx.cookies.set('admin_token', admin, {
+                        httpOnly: false,
+                        sign: true,
+                        maxAge: 1000 * 60 * 60 * 24,
+                    });
+                }
+
                 let token = null;
                 try {
                     token = await UserController.token(user);
@@ -236,6 +304,12 @@ export default class UserController {
             maxAge: 0,
             httpOnly: true,
         });
+
+        ctx.cookies.set('admin_token', null, {
+            httpOnly: false,
+            maxAge: 0,
+        });
+
         ctx.status = 204;
     }
 
@@ -273,6 +347,23 @@ export default class UserController {
         const userCart = user.cart;
 
         delete userCart[ctx.request.body.id];
+
+        user.cart = { ...userCart };
+
+        const savedUser = await userRepository.save(user);
+        // return OK status code and loaded users array
+        ctx.status = 200;
+    }
+
+    public static async cartClear(ctx: any, next: any) {
+        //get a user repository to perform operations with user
+        const userRepository: Repository<User> = getManager().getRepository(User);
+        // load all users
+        const user: User | any = await userRepository.findOne({
+            where: { id: ctx.request.user.id },
+        });
+
+        const userCart = {};
 
         user.cart = { ...userCart };
 

@@ -7,6 +7,7 @@ import {
     OneToMany,
     ManyToMany,
     Unique,
+    OneToOne,
 } from 'typeorm';
 
 import { Length, IsEmail } from 'class-validator';
@@ -26,6 +27,9 @@ export class User {
     @Column('text', { name: 'userID' })
     @Length(5, 20)
     userID: string | undefined;
+
+    @Column('boolean', { nullable: true })
+    isAdmin: boolean | undefined;
 
     @Column('text')
     name: string | undefined;
@@ -51,6 +55,9 @@ export class User {
     @OneToMany((type) => Address, (address) => address.user)
     address: Address[] | undefined;
 
+    @Column('boolean', { nullable: true })
+    newsLetter: boolean | undefined;
+
     @Column('int', { nullable: true })
     credit: number | undefined;
 
@@ -60,7 +67,7 @@ export class User {
     @OneToMany((type) => OrderHistory, (orderHistory) => orderHistory.user)
     orderHistories: OrderHistory[] | undefined;
 
-    @ManyToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.users)
+    @OneToMany((type) => PackageSubsc, (packageSubsc) => packageSubsc.user)
     packageSubscs: PackageSubsc[] | undefined;
 
     @OneToMany((type) => PackageHistory, (packageHistory) => packageHistory.user)

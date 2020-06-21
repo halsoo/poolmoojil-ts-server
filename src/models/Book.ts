@@ -12,6 +12,7 @@ import {
 
 import { Image } from './Image';
 import { Gathering } from './Gathering';
+import { MonthlyCuration } from './MonthlyCuration';
 
 @Entity('books')
 export class Book {
@@ -21,7 +22,7 @@ export class Book {
     @OneToOne((type) => Image, {
         nullable: true,
         cascade: true,
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         primary: false,
     })
     @JoinColumn()
@@ -75,13 +76,20 @@ export class Book {
     @Column('text', { nullable: true })
     desc: string | undefined;
 
-    @ManyToMany((type) => Gathering, (gathering) => gathering.books, { nullable: true })
+    @ManyToMany((type) => Gathering, (gathering) => gathering.books, {
+        nullable: true,
+    })
     gatherings: Gathering[] | undefined;
 
     @OneToMany((type) => Image, (image) => image.book, {
         nullable: true,
     })
     additionalImg: Image[] | undefined;
+
+    @OneToMany((type) => MonthlyCuration, (monthlyCuration) => monthlyCuration.book, {
+        nullable: true,
+    })
+    monthlyCurations: MonthlyCuration[] | undefined;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

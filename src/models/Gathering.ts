@@ -9,11 +9,13 @@ import {
     UpdateDateColumn,
     ManyToOne,
     ManyToMany,
+    OneToMany,
 } from 'typeorm';
 
 import { Book } from './Book';
 import { Image } from './Image';
 import { Place } from './Place';
+import { GatheringHistory } from './GatheringHistory';
 
 @Entity('gatherings')
 export class Gathering {
@@ -95,6 +97,11 @@ export class Gathering {
     })
     @JoinColumn()
     additionalImg: Image[] | undefined;
+
+    @OneToMany((type) => GatheringHistory, (gatheringHistory) => gatheringHistory.gathering, {
+        nullable: true,
+    })
+    gatheringHistories: GatheringHistory[] | undefined;
 
     @Column('text', { nullable: true })
     liveLink: string | undefined;

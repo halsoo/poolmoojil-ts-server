@@ -1,3 +1,28 @@
+import moment from 'moment';
+import 'moment/locale/ko';
+
+export function nextMonthWeekDay(stringDate: string) {
+    const weekStr: any = stringDate.substring(3, 4);
+    const dayStr: any = stringDate.substring(6, 7);
+    const week: any = convertKorToWeekNum(weekStr);
+    const day: any = convertKorToDayNum(dayStr);
+    const targetDayObj = moment().add(1, 'months');
+    const targetWeek = Math.ceil(targetDayObj.date() / 7);
+    const targetDay = parseInt(targetDayObj.format('E'));
+    let startDayObj =
+        week - targetWeek >= 0
+            ? targetDayObj.add((week - targetWeek) * 7, 'days')
+            : targetDayObj.subtract(Math.abs(week - targetWeek) * 7, 'days');
+    startDayObj =
+        day - targetDay >= 0
+            ? targetDayObj.add(day - targetDay, 'days')
+            : targetDayObj.subtract(Math.abs(day - targetDay), 'days');
+
+    const newStringDate = startDayObj.format('YYYY[-]MM[-]DD');
+
+    return newStringDate;
+}
+
 export function convertKorToDayNum(str: string) {
     switch (str) {
         case '월':

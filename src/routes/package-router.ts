@@ -5,3 +5,21 @@ export const PackageRouter = new Router();
 PackageRouter.post('/', PackageController.getPackages); //Get all users in the database
 PackageRouter.get('/getid/:id', PackageController.getPackageID); //Get a single user by id
 PackageRouter.get('/getmonthly', PackageController.getPackageMonthly);
+
+PackageRouter.post('/createhistory', PackageController.createPackageHistory);
+PackageRouter.post('/gethistories', PackageController.getPackageHistories);
+PackageRouter.post('/gethistorybyordernum', PackageController.getPackageHistoryOrderNum);
+PackageRouter.post('/gethistorybyid', PackageController.getPackageHistoryID);
+PackageRouter.post('/changetransactionstatus', PackageController.changeTransactionHistory);
+PackageRouter.post('/updatepackage', PackageController.updatePackageInfo);
+
+PackageRouter.post('/createsubsc', PackageController.createPackageSubsc);
+PackageRouter.post('/getsubscs', PackageController.getPackageSubscs);
+PackageRouter.post('/getsubscbyid', PackageController.getPackageSubscID);
+PackageRouter.post('/getsubscbyordernum', PackageController.getPackageSubscOrderNum);
+PackageRouter.post('/changesubscstatus', PackageController.changeSubscStatus);
+
+PackageRouter.get('/changeoutofstock/:id', PackageController.changeOutOfStock);
+PackageRouter.post('/create', PackageController.createPackage);
+PackageRouter.post('/edit', PackageController.updatePackage);
+PackageRouter.get('/delete/:id', PackageController.deletePackage);

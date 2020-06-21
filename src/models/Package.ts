@@ -8,12 +8,15 @@ import {
     JoinTable,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 import { Image } from './Image';
 import { Book } from './Book';
 import { Good } from './Good';
 import { MonthlyCuration } from './MonthlyCuration';
+import { PackageHistory } from './PackageHistory';
+import { PackageSubsc } from './PackageSubsc';
 
 @Entity('packages')
 export class Package {
@@ -26,6 +29,9 @@ export class Package {
 
     @Column('text')
     title: string | undefined;
+
+    @Column('boolean', { nullable: true })
+    outOfStock: boolean | undefined;
 
     @Column('text')
     desc: string | undefined;
@@ -62,6 +68,9 @@ export class Package {
 
     @Column('date', { nullable: true })
     date: string | undefined;
+
+    @OneToMany((type) => PackageHistory, (packageHistory) => packageHistory.package)
+    packageHistories: PackageHistory[] | undefined;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

@@ -2,6 +2,7 @@ import { getManager, Repository, Like, Between } from 'typeorm';
 
 import { Book } from '../models/Book';
 import { MonthlyCuration } from '../models/MonthlyCuration';
+import { Image } from '../models/Image';
 
 export default class BookController {
     public static async getBooks(ctx: any, next: any) {
@@ -43,6 +44,7 @@ export default class BookController {
                     mainImg: 'book.mainImg',
                     additionalImg: 'book.additionalImg',
                     gatherings: 'book.gatherings',
+                    monthlyCurations: 'book.monthlyCurations',
                 },
             },
             where: { id: ctx.params.id },
@@ -53,6 +55,240 @@ export default class BookController {
             ctx.status = 200;
             ctx.body = book;
         } else {
+            // return a BAD REQUEST status code and error message
+            ctx.status = 404;
+        }
+    }
+
+    public static async createBook(ctx: any) {
+        try {
+            // get a user repository to perform operations with user
+            const curationRepository: Repository<MonthlyCuration> = getManager().getRepository(
+                MonthlyCuration,
+            );
+            const imageRepository: Repository<Image> = getManager().getRepository(Image);
+            const bookRepository: Repository<Book> = getManager().getRepository(Book);
+            // load user by id
+            const req = ctx.request.body;
+            const book: Book = new Book();
+
+            if (req.mainImg) {
+                const mainImg = new Image();
+                mainImg.name = req.mainImg.substring(65);
+                mainImg.link = req.mainImg;
+                const newMainImg = await imageRepository.save(mainImg);
+
+                book.mainImg = newMainImg;
+            }
+
+            if (req.additionalImg) {
+                const additionalImg = new Image();
+                additionalImg.name = req.additionalImg.substring(65);
+                additionalImg.link = req.additionalImg;
+                const newAdditionalImg = await imageRepository.save(additionalImg);
+
+                book.additionalImg = [newAdditionalImg];
+            }
+
+            book.type = req.type;
+            book.quantity = req.quantity;
+            book.title = req.title;
+            book.price = req.price;
+            book.author = req.author;
+            book.translator = req.translator;
+            book.publishingCompany = req.publishingCompany;
+            book.editor = req.editor;
+            book.designer = req.designer;
+            book.publisher = req.publisher;
+            book.publishDate = req.publishDate;
+            book.ISBN = req.ISBN;
+            book.pages = req.pages;
+            book.dimensions = req.dimensions;
+            book.weights = req.weights;
+            book.desc = req.desc;
+
+            if (req.monthlyCurations) {
+                const newBook = await bookRepository.save(book);
+                let mc: MonthlyCuration[] = [];
+
+                for (const m in req.monthlyCurations) {
+                    const newMonthly = new MonthlyCuration();
+                    newMonthly.date = req.monthlyCurations[m];
+                    const newNewMonthly = await curationRepository.save(newMonthly);
+                    mc.push(newNewMonthly);
+                }
+                book.monthlyCurations = mc;
+            }
+
+            const newBook = await bookRepository.save(book);
+
+            if (newBook) {
+                // return OK status code and loaded user object
+                ctx.status = 200;
+                ctx.body = newBook;
+            } else {
+                // return a BAD REQUEST status code and error message
+                ctx.status = 404;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    public static async updateBook(ctx: any) {
+        try {
+            // get a user repository to perform operations with user
+            const curationRepository: Repository<MonthlyCuration> = getManager().getRepository(
+                MonthlyCuration,
+            );
+            const imageRepository: Repository<Image> = getManager().getRepository(Image);
+            const bookRepository: Repository<Book> = getManager().getRepository(Book);
+            // load user by id
+            const req = ctx.request.body;
+            const book: Book | any = await bookRepository.findOne({
+                join: {
+                    alias: 'book',
+                    leftJoinAndSelect: {
+                        mainImg: 'book.mainImg',
+                        additionalImg: 'book.additionalImg',
+                        monthlyCurations: 'book.monthlyCurations',
+                    },
+                },
+                where: { id: req.id },
+            });
+
+            if (req.mainImg) {
+                const oldImage: any = await imageRepository.findOne({
+                    where: { id: book.mainImg.id },
+                });
+
+                if (oldImage) {
+                    if (oldImage.link === req.mainImg) {
+                        book.mainImg = oldImage;
+                    } else {
+                        await imageRepository.remove(oldImage);
+
+                        const mainImg = new Image();
+                        mainImg.name = req.mainImg.substring(65);
+                        mainImg.link = req.mainImg;
+                        const newMainImg = await imageRepository.save(mainImg);
+
+                        book.mainImg = newMainImg;
+                    }
+                } else {
+                    const mainImg = new Image();
+                    mainImg.name = req.mainImg.substring(65);
+                    mainImg.link = req.mainImg;
+                    const newMainImg = await imageRepository.save(mainImg);
+
+                    book.mainImg = newMainImg;
+                }
+            }
+
+            if (req.additionalImg.length !== 0) {
+                if (book.additionalImg.length !== 0) {
+                    const oldAddImage: any = await imageRepository.findOne({
+                        where: { id: book.additionalImg[0].id },
+                    });
+
+                    await imageRepository.remove(oldAddImage);
+                }
+
+                const additionalImg = new Image();
+                additionalImg.name = req.additionalImg.substring(65);
+                additionalImg.link = req.additionalImg;
+                const newAdditionalImg = await imageRepository.save(additionalImg);
+
+                book.additionalImg = [newAdditionalImg];
+            }
+
+            if (req.monthlyCurations) {
+                let mc: MonthlyCuration[] = [];
+
+                for (const m in req.monthlyCurations) {
+                    const curation: MonthlyCuration | undefined = await curationRepository.findOne({
+                        where: {
+                            date: req.monthlyCurations[m],
+                        },
+                    });
+
+                    if (curation) {
+                        if (curation.date === req.monthlyCurations[m]) {
+                            mc.push(curation);
+                        } else {
+                            await curationRepository.remove(curation);
+
+                            const newMonthly = new MonthlyCuration();
+                            newMonthly.date = req.monthlyCurations[m];
+                            const newNewMonthly = await curationRepository.save(newMonthly);
+                            mc.push(newNewMonthly);
+                        }
+                    } else {
+                        const newMonthly = new MonthlyCuration();
+                        newMonthly.date = req.monthlyCurations[m];
+                        const newNewMonthly = await curationRepository.save(newMonthly);
+                        mc.push(newNewMonthly);
+                    }
+
+                    book.monthlyCurations = mc;
+                }
+            }
+
+            book.type = req.type;
+            book.quantity = req.quantity;
+            book.title = req.title;
+            book.price = req.price;
+            book.author = req.author;
+            book.translator = req.translator;
+            book.publishingCompany = req.publishingCompany;
+            book.editor = req.editor;
+            book.designer = req.designer;
+            book.publisher = req.publisher;
+            book.publishDate = req.publishDate;
+            book.ISBN = req.ISBN;
+            book.pages = req.pages;
+            book.dimensions = req.dimensions;
+            book.weights = req.weights;
+            book.desc = req.desc;
+
+            const newBook = await bookRepository.save(book);
+
+            if (newBook) {
+                // return OK status code and loaded user object
+                ctx.status = 200;
+                ctx.body = newBook;
+            } else {
+                // return a BAD REQUEST status code and error message
+                ctx.status = 404;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    public static async deleteBook(ctx: any) {
+        try {
+            // get a user repository to perform operations with user
+            const bookRepository: Repository<Book> = getManager().getRepository(Book);
+            // load user by id
+            const book: Book | any = await bookRepository.findOne({
+                join: {
+                    alias: 'book',
+                    leftJoinAndSelect: {
+                        mainImg: 'book.mainImg',
+                        additionalImg: 'book.additionalImg',
+                        gatherings: 'book.gatherings',
+                        monthlyCurations: 'book.monthlyCurations',
+                    },
+                },
+                where: { id: ctx.params.id },
+            });
+
+            await bookRepository.remove(book);
+
+            // return OK status code and loaded user object
+            ctx.status = 204;
+        } catch {
             // return a BAD REQUEST status code and error message
             ctx.status = 404;
         }

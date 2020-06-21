@@ -27,8 +27,26 @@ export class OrderHistory {
     })
     user: User | undefined;
 
-    @Column('boolean')
-    isBook: boolean | undefined;
+    @Column('text', { nullable: true })
+    orderNum: string | undefined;
+
+    @Column('text', { nullable: true })
+    name: string | undefined;
+
+    @Column('text', { nullable: true })
+    zip: string | undefined;
+
+    @Column('text', { nullable: true })
+    addressA: string | undefined;
+
+    @Column('text', { nullable: true })
+    addressB: string | undefined;
+
+    @Column('text', { nullable: true })
+    phone: string | undefined;
+
+    @Column('json', { nullable: true })
+    cart: object | undefined;
 
     @ManyToMany((type) => Book, {
         nullable: true,
@@ -49,13 +67,13 @@ export class OrderHistory {
     goods: Good[] | undefined;
 
     @Column('text', { nullable: true })
-    additionalAddress: string | undefined;
-
-    @Column('text', { nullable: true })
     transactionStatus: string | undefined;
 
-    @Column('int', { nullable: true })
+    @Column('money', { nullable: true })
     creditUse: number | undefined;
+
+    @Column('money', { nullable: true })
+    shippingFee: number | undefined;
 
     @Column('money', { nullable: true })
     totalPrice: number | undefined;

@@ -2,13 +2,16 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
+    OneToOne,
     OneToMany,
+    JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
 } from 'typeorm';
 
 import { Length } from 'class-validator';
 import { Gathering } from './Gathering';
+import { Image } from './Image';
 
 @Entity('places')
 export class Place {
@@ -60,6 +63,10 @@ export class Place {
 
     @OneToMany((type) => Gathering, (gathering) => gathering.place, { nullable: true })
     gatherings: Gathering[] | any;
+
+    @OneToOne((type) => Image, { nullable: true, cascade: true, onDelete: 'CASCADE' })
+    @JoinColumn()
+    mainImg: Image | undefined;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

@@ -33,28 +33,43 @@ export function decodeToken(token: any): Promise<Object> {
 
 export async function jwtMiddleware(ctx: any, next: any) {
     const token = ctx.cookies.get('access_token');
+    const admin = ctx.cookies.get('admin_token');
     if (!token) return next();
 
     try {
         const decoded: any = await decodeToken(token); // 토큰을 디코딩 합니다
         // 토큰 만료일이 하루밖에 안남으면 토큰을 재발급합니다
+        let admin: any = undefined;
+        if (admin) admin = await decodeToken(admin);
 
         if (Date.now() / 1000 - decoded.iat > 60 * 60) {
-            // 하루가 지나면 갱신해준다.
             const { id, userID, email } = decoded;
             const freshToken = await generateToken({ id, userID, email });
             ctx.cookies.set('access_token', freshToken, {
                 maxAge: 1000 * 60 * 60 * 24, // 1day
-                httpOnly: true,
+                httpOnly: false,
             });
         }
 
+        if (admin) {
+            if (Date.now() / 1000 - admin.iat > 60 * 60) {
+                const { id, userID } = admin;
+                const freshAdmin = await generateToken({ id, userID });
+                ctx.cookies.set('access_token', freshAdmin, {
+                    maxAge: 1000 * 60 * 60 * 24, // 1day
+                    httpOnly: false,
+                });
+            }
+        }
+
         ctx.request.user = decoded;
+        ctx.request.admin = admin;
 
         // ctx.request.user 에 디코딩된 값을 넣어줍니다
     } catch (e) {
         // token validate 실패
         ctx.request.user = null;
+        ctx.request.admin = null;
     }
     return next();
 }

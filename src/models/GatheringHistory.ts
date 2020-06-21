@@ -2,9 +2,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    OneToOne,
     ManyToOne,
-    JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -18,13 +16,15 @@ export class GatheringHistory {
     @PrimaryGeneratedColumn('uuid')
     id: string | undefined;
 
-    @OneToOne((type) => Gathering, {
+    @ManyToOne((type) => Gathering, (gathering) => gathering.gatheringHistories, {
         cascade: true,
         onDelete: 'SET NULL',
         primary: false,
     })
-    @JoinColumn()
     gathering: Gathering | undefined;
+
+    @Column('text', { nullable: true })
+    orderNum: string | undefined;
 
     @ManyToOne((type) => User, (user) => user.gatheringHistories, {
         cascade: true,
@@ -33,12 +33,24 @@ export class GatheringHistory {
     })
     user: User | undefined;
 
+    @Column('text', { nullable: true })
+    showUp: string | undefined;
+
     @Column('int', { nullable: true })
     @Max(3)
     headCount: number | undefined;
 
-    @Column('timestamp')
-    purchaseDate: Date | undefined;
+    @Column('date', { nullable: true })
+    date: string | undefined;
+
+    @Column('money', { nullable: true })
+    creditUse: number | undefined;
+
+    @Column('money', { nullable: true })
+    totalPrice: number | undefined;
+
+    @Column('date')
+    purchaseDate: string | undefined;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

@@ -36,8 +36,8 @@ export class Address {
     @Column('text', { nullable: true })
     addressB: string | undefined;
 
-    @Column('boolean', { nullable: true })
-    isIslandMountainousArea: boolean | undefined;
+    // @Column('boolean', { nullable: true })
+    // isIslandMountainousArea: boolean | undefined;
 
     @CreateDateColumn()
     createdAt: Date | undefined;

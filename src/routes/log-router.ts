@@ -13,7 +13,9 @@ LogRouter.delete('/:id', UserController.deleteUser);
 LogRouter.post('/login', UserController.logIn);
 LogRouter.post('/logout', UserController.logOut);
 LogRouter.post('/register', UserController.createUser); //Create a single user in the database
+LogRouter.post('/update', UserController.updateUser);
 
 LogRouter.post('/cartin', UserController.cartIn);
 LogRouter.post('/cartout', UserController.cartOut);
+LogRouter.post('/cartclear', UserController.cartClear);
 LogRouter.get('/getcartcookie', UserController.getCart);

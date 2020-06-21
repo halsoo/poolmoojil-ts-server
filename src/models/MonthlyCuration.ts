@@ -2,37 +2,25 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    ManyToMany,
     CreateDateColumn,
     UpdateDateColumn,
-    JoinTable,
+    ManyToOne,
 } from 'typeorm';
 
 import { Book } from './Book';
-import { Good } from './Good';
 
 @Entity('monthlyCuration')
 export class MonthlyCuration {
     @PrimaryGeneratedColumn('uuid')
     id: string | undefined;
 
-    @ManyToMany((type) => Book, {
+    @ManyToOne((type) => Book, {
         nullable: true,
         cascade: true,
         onDelete: 'CASCADE',
         primary: false,
     })
-    @JoinTable()
-    book: Book[] | undefined;
-
-    @ManyToMany((type) => Good, {
-        nullable: true,
-        cascade: true,
-        onDelete: 'CASCADE',
-        primary: false,
-    })
-    @JoinTable()
-    good: Good[] | undefined;
+    book: Book | undefined;
 
     @Column('date', { nullable: true })
     date: string | undefined;
