@@ -20,7 +20,26 @@ const staticPages = new Koa();
 staticPages.use(koaStatic(path.join(__dirname, '/frontend')));
 
 app.use(async (ctx: any, next: any) => {
-    if (REACT_ROUTER_PATH.includes(ctx.request.path)) {
+    let path = undefined;
+    let og = ctx.request.path;
+    if (
+        og.substring(og.length - 13, og.length - 12) === '-' &&
+        og.substring(og.length - 18, og.length - 17) === '-' &&
+        og.substring(og.length - 23, og.length - 22) === '-' &&
+        og.substring(og.length - 28, og.length - 27) === '-' &&
+        og.substring(0, 4) !== '/api'
+    ) {
+        path = og.substring(og.length - 36, 0);
+    } else if (
+        og.substring(og.length - 14, og.length - 13) === '_' &&
+        og.substring(0, 4) !== '/api'
+    ) {
+        path = og.substring(og.lastIndexOf('/') + 1, 0);
+    } else {
+        path = og;
+    }
+    console.log(path);
+    if (REACT_ROUTER_PATH.includes(path)) {
         ctx.request.path = '/';
     }
     await next();

@@ -120,6 +120,36 @@ export default class OrderHistoryController {
         }
     }
 
+    public static async getOrderHistoriesByUser(ctx: any, next: any) {
+        try {
+            //get a user repository to perform operations with user
+            const historyRepository: Repository<OrderHistory> = getManager().getRepository(
+                OrderHistory,
+            );
+
+            const req = ctx.request.body;
+
+            const histories = await getManager()
+                .createQueryBuilder(OrderHistory, 'history')
+                .leftJoinAndSelect('history.user', 'user')
+                .where('user.id = :id', { id: req.user.id })
+                .orderBy('history.createdAt', 'DESC')
+                .skip((req.page - 1) * req.offset)
+                .take(req.offset)
+                .getMany();
+
+            ctx.status = 200;
+            if (histories.length > 0) {
+                ctx.body = histories;
+            } else {
+                ctx.body = '검색 결과가 없습니다.';
+            }
+        } catch (err) {
+            console.log(err);
+            ctx.status = 404;
+        }
+    }
+
     public static async getOrderHistoryOrderNum(ctx: any) {
         // get a user repository to perform operations with user
         try {
@@ -173,6 +203,35 @@ export default class OrderHistoryController {
         });
 
         history.transactionStatus = req.status;
+
+        const newHistory = orderHistoryRepository.save(history);
+
+        if (newHistory) {
+            // return OK status code and loaded user object
+            ctx.status = 200;
+            ctx.body = newHistory;
+        } else {
+            // return a BAD REQUEST status code and error message
+            ctx.status = 404;
+        }
+    }
+
+    public static async cancelOrder(ctx: any) {
+        const orderHistoryRepository: Repository<OrderHistory> = getManager().getRepository(
+            OrderHistory,
+        );
+
+        const history: OrderHistory | any = await orderHistoryRepository.findOne({
+            join: {
+                alias: 'OrderHistory',
+                leftJoinAndSelect: {
+                    user: 'OrderHistory.user',
+                },
+            },
+            where: { orderNum: ctx.params.orderNum },
+        });
+
+        history.transactionStatus = '주문 취소 대기중';
 
         const newHistory = orderHistoryRepository.save(history);
 

@@ -74,7 +74,7 @@ export class PackageHistory {
     @ManyToOne((type) => PackageSubsc, (packageSubsc) => packageSubsc.packageHistories, {
         nullable: true,
         cascade: true,
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
         primary: false,
     })
     packageSubsc: PackageSubsc | undefined;

@@ -16,7 +16,9 @@ GatheringRouter.get('/threemonths', GatheringController.getThreeMonthsGathering)
 
 GatheringRouter.post('/createhistory', GatheringController.createGatheringHistory);
 GatheringRouter.post('/gethistories', GatheringController.getGatheringHistories);
+GatheringRouter.post('/gethistoriesbyuser', GatheringController.getGatheringHistoriesByUser);
 GatheringRouter.post('/gethistorybyordernum', GatheringController.getGatheringOrderNum);
+GatheringRouter.get('/cancelhistory/:id', GatheringController.cancelGatheringHistory); //Get a single user by id
 
 GatheringRouter.post('/create', GatheringController.createGathering);
 GatheringRouter.post('/edit', GatheringController.updateGathering);

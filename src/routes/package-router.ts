@@ -8,6 +8,8 @@ PackageRouter.get('/getmonthly', PackageController.getPackageMonthly);
 
 PackageRouter.post('/createhistory', PackageController.createPackageHistory);
 PackageRouter.post('/gethistories', PackageController.getPackageHistories);
+PackageRouter.get('/cancelhistory/:id', PackageController.cancelPackageHistory);
+PackageRouter.post('/gethistoriesbyuser', PackageController.getPackageHistoriesByUser);
 PackageRouter.post('/gethistorybyordernum', PackageController.getPackageHistoryOrderNum);
 PackageRouter.post('/gethistorybyid', PackageController.getPackageHistoryID);
 PackageRouter.post('/changetransactionstatus', PackageController.changeTransactionHistory);

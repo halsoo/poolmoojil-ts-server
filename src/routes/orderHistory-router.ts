@@ -5,5 +5,7 @@ export const OrderHistoryRouter = new Router();
 OrderHistoryRouter.post('/create', OrderHistoryController.createOrderHistory); //Get all users in the database
 OrderHistoryRouter.post('/getbyordernum', OrderHistoryController.getOrderHistoryOrderNum); //Get a single user by id
 OrderHistoryRouter.post('/', OrderHistoryController.getOrderHistories);
+OrderHistoryRouter.post('/gethistoriesbyuser', OrderHistoryController.getOrderHistoriesByUser);
 OrderHistoryRouter.post('/changetransactionstatus', OrderHistoryController.changeTransactionStatus);
+OrderHistoryRouter.get('/cancelorder/:orderNum', OrderHistoryController.cancelOrder);
 // OrderHistoryRouter.get('/threemonths', OrderHistoryController.getThreeMonthsOrderHistory);

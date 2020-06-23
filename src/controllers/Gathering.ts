@@ -268,6 +268,68 @@ export default class GatheringController {
         }
     }
 
+    public static async cancelGatheringHistory(ctx: any) {
+        const gatheringHistoryRepository: Repository<GatheringHistory> = getManager().getRepository(
+            GatheringHistory,
+        );
+
+        const history: GatheringHistory | any = await gatheringHistoryRepository.findOne({
+            join: {
+                alias: 'GatheringHistory',
+                leftJoinAndSelect: {
+                    user: 'GatheringHistory.user',
+                },
+            },
+            where: { id: ctx.params.id },
+        });
+
+        history.showUp = '예약 취소 대기중';
+
+        const newHistory = gatheringHistoryRepository.save(history);
+
+        if (newHistory) {
+            // return OK status code and loaded user object
+            ctx.status = 200;
+            ctx.body = newHistory;
+        } else {
+            // return a BAD REQUEST status code and error message
+            ctx.status = 404;
+        }
+    }
+
+    public static async getGatheringHistoriesByUser(ctx: any, next: any) {
+        try {
+            //get a user repository to perform operations with user
+            const gatheringHistoryRepository: Repository<GatheringHistory> = getManager().getRepository(
+                GatheringHistory,
+            );
+
+            const req = ctx.request.body;
+
+            const gatheringHistories = await getManager()
+                .createQueryBuilder(GatheringHistory, 'gatheringHistory')
+                .innerJoinAndSelect('gatheringHistory.gathering', 'gathering')
+                .innerJoinAndSelect('gatheringHistory.user', 'user')
+                .innerJoinAndSelect('gathering.mainImg', 'mainImg')
+                .innerJoinAndSelect('gathering.place', 'place')
+                .where('user.id = :id', { id: req.user.id })
+                .orderBy('gatheringHistory.createdAt', 'ASC')
+                .skip((req.page - 1) * req.offset)
+                .take(req.offset)
+                .getMany();
+
+            ctx.status = 200;
+            if (gatheringHistories.length > 0) {
+                ctx.body = gatheringHistories;
+            } else {
+                ctx.body = '검색 결과가 없습니다.';
+            }
+        } catch (err) {
+            console.log(err);
+            ctx.status = 404;
+        }
+    }
+
     public static async getGatheringPeople(ctx: any, next: any) {
         try {
             const gatheringHistoryRepository: Repository<GatheringHistory> = getManager().getRepository(

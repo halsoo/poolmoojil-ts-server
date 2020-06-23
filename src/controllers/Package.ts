@@ -355,6 +355,35 @@ export default class PackageController {
         // return CREATED status code and updated OrderHistory
     }
 
+    public static async cancelPackageHistory(ctx: any) {
+        const historyRepository: Repository<PackageHistory> = getManager().getRepository(
+            PackageHistory,
+        );
+
+        const history: PackageHistory | any = await historyRepository.findOne({
+            join: {
+                alias: 'PakcageHistory',
+                leftJoinAndSelect: {
+                    user: 'PakcageHistory.user',
+                },
+            },
+            where: { id: ctx.params.id },
+        });
+
+        history.transactionStatus = '주문 취소 대기중';
+
+        const newHistory = historyRepository.save(history);
+
+        if (newHistory) {
+            // return OK status code and loaded user object
+            ctx.status = 200;
+            ctx.body = newHistory;
+        } else {
+            // return a BAD REQUEST status code and error message
+            ctx.status = 404;
+        }
+    }
+
     public static async getPackageHistories(ctx: any) {
         // get a user repository to perform operations with user
         const PackageHistoryRepository: Repository<PackageHistory> = getManager().getRepository(
@@ -367,10 +396,11 @@ export default class PackageController {
         if (req.name) {
             packageHistories = await getManager()
                 .createQueryBuilder(PackageHistory, 'packageHistory')
-                .innerJoinAndSelect('packageHistory.package', 'package')
-                .innerJoinAndSelect('packageHistory.user', 'user')
+                .leftJoinAndSelect('packageHistory.package', 'package')
+                .leftJoinAndSelect('packageHistory.user', 'user')
+                .leftJoinAndSelect('user.address', 'address')
                 .where('user.name = :name', { name: req.name })
-                .orderBy('packageHistory.purchaseDate', 'ASC')
+                .orderBy('packageHistory.purchaseDate', 'DESC')
                 .skip((req.page - 1) * req.offset)
                 .take(req.offset)
                 .getMany();
@@ -384,7 +414,7 @@ export default class PackageController {
                         package: 'PackageHistory.package',
                     },
                 },
-                order: { purchaseDate: 'ASC' },
+                order: { purchaseDate: 'DESC' },
                 skip: (req.page - 1) * req.offset,
                 take: req.offset,
             });
@@ -398,6 +428,37 @@ export default class PackageController {
         } else {
             // return a BAD REQUEST status code and error message
             ctx.body = 'not founded';
+        }
+    }
+
+    public static async getPackageHistoriesByUser(ctx: any, next: any) {
+        try {
+            //get a user repository to perform operations with user
+            const historyRepository: Repository<PackageHistory> = getManager().getRepository(
+                PackageHistory,
+            );
+
+            const req = ctx.request.body;
+
+            const histories = await getManager()
+                .createQueryBuilder(PackageHistory, 'history')
+                .leftJoinAndSelect('history.package', 'package')
+                .leftJoinAndSelect('history.user', 'user')
+                .where('user.id = :id', { id: req.user.id })
+                .orderBy('history.purchaseDate', 'DESC')
+                .skip((req.page - 1) * req.offset)
+                .take(req.offset)
+                .getMany();
+
+            ctx.status = 200;
+            if (histories.length > 0) {
+                ctx.body = histories;
+            } else {
+                ctx.body = '검색 결과가 없습니다.';
+            }
+        } catch (err) {
+            console.log(err);
+            ctx.status = 404;
         }
     }
 
