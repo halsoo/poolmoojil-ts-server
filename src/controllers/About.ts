@@ -14,6 +14,7 @@ export default class AboutController {
                 .select('abouts')
                 .from(About, 'abouts')
                 .where('abouts.isShow = :value', { value: true })
+                .orderBy('abouts.order', 'ASC')
                 .getMany();
 
             ctx.body = aboutTexts;
@@ -83,6 +84,7 @@ export default class AboutController {
 
             const req = ctx.request.body;
 
+            if (req.order) about.order = req.order;
             if (req.isShow) about.isShow = req.isShow;
             if (req.title) about.title = req.title;
             if (req.body) about.body = req.body;
@@ -117,6 +119,7 @@ export default class AboutController {
             const req = ctx.request.body;
 
             if (about) {
+                if (req.order) about.order = req.order;
                 if (req.isShow) about.isShow = req.isShow;
                 if (req.title) about.title = req.title;
                 if (req.body) about.body = req.body;

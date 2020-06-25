@@ -25,7 +25,10 @@ export default class OrderHistoryController {
         const user: any = await userRepository.findOne({
             where: { id: req.user.id },
         });
-        newOrderHistory.user = user;
+        user.credit = user.credit + Math.floor(req.totalPrice * 0.05);
+        const newUser = await userRepository.save(user);
+
+        newOrderHistory.user = newUser;
         newOrderHistory.orderNum = req.orderNum;
         newOrderHistory.name = req.name;
         newOrderHistory.zip = req.zip;

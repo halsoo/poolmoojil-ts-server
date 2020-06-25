@@ -11,6 +11,9 @@ export class About {
     @PrimaryGeneratedColumn('uuid')
     id: string | undefined;
 
+    @Column('integer', { nullable: true })
+    order: number | undefined;
+
     @Column('boolean', { nullable: true })
     isShow: boolean | undefined;
 

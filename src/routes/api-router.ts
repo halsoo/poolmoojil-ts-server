@@ -77,7 +77,6 @@ apiRouter.post(
     multer({ storage: s3Storage }).single('file'),
     async (ctx: any, next) => {
         const body = ctx.req.file;
-        console.log(body);
 
         ctx.status = 200;
         ctx.body = body;
