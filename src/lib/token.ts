@@ -39,8 +39,8 @@ export async function jwtMiddleware(ctx: any, next: any) {
     try {
         const decoded: any = await decodeToken(token); // 토큰을 디코딩 합니다
         // 토큰 만료일이 하루밖에 안남으면 토큰을 재발급합니다
-        let admin: any = undefined;
-        if (admin) admin = await decodeToken(admin);
+        let decodedAdmin: any = undefined;
+        if (admin) decodedAdmin = await decodeToken(admin);
 
         if (Date.now() / 1000 - decoded.iat > 60 * 60) {
             const { id, userID, email } = decoded;
@@ -51,11 +51,11 @@ export async function jwtMiddleware(ctx: any, next: any) {
             });
         }
 
-        if (admin) {
+        if (decodedAdmin) {
             if (Date.now() / 1000 - admin.iat > 60 * 60) {
-                const { id, userID } = admin;
+                const { id, userID } = decodedAdmin;
                 const freshAdmin = await generateToken({ id, userID });
-                ctx.cookies.set('access_token', freshAdmin, {
+                ctx.cookies.set('admin_token', freshAdmin, {
                     maxAge: 1000 * 60 * 60 * 24, // 1day
                     httpOnly: false,
                 });
@@ -63,7 +63,7 @@ export async function jwtMiddleware(ctx: any, next: any) {
         }
 
         ctx.request.user = decoded;
-        ctx.request.admin = admin;
+        ctx.request.admin = decodedAdmin;
 
         // ctx.request.user 에 디코딩된 값을 넣어줍니다
     } catch (e) {

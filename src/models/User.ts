@@ -31,6 +31,9 @@ export class User {
     @Column('boolean', { nullable: true })
     isAdmin: boolean | undefined;
 
+    @Column('text', { nullable: true })
+    membership: string | undefined;
+
     @Column('text')
     name: string | undefined;
 

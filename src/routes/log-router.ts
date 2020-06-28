@@ -2,20 +2,21 @@ import Router from 'koa-router';
 import UserController from '../controllers/User';
 export const LogRouter = new Router();
 //Routes for the user entity
-LogRouter.get('/', UserController.getUsers); //Get all users in the database
-LogRouter.get('/getuser/:id', UserController.getUser); //Get a single user by id
+LogRouter.post('/', UserController.getUsers); //
+LogRouter.get('/getuser/:id', UserController.getUser);
 LogRouter.get('/getbycookie', UserController.getUserCookie);
-LogRouter.get('/getemail/:email', UserController.getEmail); //Get a single user by id
+LogRouter.get('/getemail/:email', UserController.getEmail);
 
-LogRouter.put('/:id', UserController.updateUser); //Update a single user that matches the passed id
-LogRouter.delete('/:id', UserController.deleteUser);
+LogRouter.post('/:id', UserController.updateUser); //
+LogRouter.delete('/:id', UserController.deleteUser); //
 
+LogRouter.post('/updatemembership', UserController.updateMembership); //
 LogRouter.post('/login', UserController.logIn);
 LogRouter.post('/logout', UserController.logOut);
-LogRouter.post('/register', UserController.createUser); //Create a single user in the database
-LogRouter.post('/update', UserController.updateUser);
+LogRouter.post('/register', UserController.createUser);
+LogRouter.post('/update', UserController.updateUser); //
 
-LogRouter.post('/cartin', UserController.cartIn);
-LogRouter.post('/cartout', UserController.cartOut);
-LogRouter.post('/cartclear', UserController.cartClear);
-LogRouter.get('/getcartcookie', UserController.getCart);
+LogRouter.post('/cartin', UserController.cartIn); //
+LogRouter.post('/cartout', UserController.cartOut); //
+LogRouter.post('/cartclear', UserController.cartClear); //
+LogRouter.get('/getcartcookie', UserController.getCart); //

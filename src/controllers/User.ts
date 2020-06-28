@@ -6,6 +6,7 @@ import { validate, ValidationError } from 'class-validator';
 import { generateToken } from '../lib/token';
 import { User } from '../models/User';
 import { Address } from '../models/Address';
+import { nextMonthWeekDay } from 'src/lib/util';
 
 export default class UserController {
     public static async token(User: User) {
@@ -28,13 +29,39 @@ export default class UserController {
     }
 
     public static async getUsers(ctx: any, next: any) {
-        //get a user repository to perform operations with user
-        const userRepository: Repository<User> = getManager().getRepository(User);
-        // load all users
-        const users: User[] = await userRepository.find();
-        // return OK status code and loaded users array
-        ctx.status = 200;
-        ctx.body = users;
+        if (ctx.request.admin) {
+            //get a user repository to perform operations with user
+            const userRepository: Repository<User> = getManager().getRepository(User);
+
+            const req = ctx.request.body;
+            // load all users
+            const users: User[] = await userRepository.find({
+                join: {
+                    alias: 'user',
+                    leftJoinAndSelect: {
+                        address: 'user.address',
+                        orderHistories: 'user.orderHistories',
+                        orderBooks: 'orderHistories.books',
+                        orderGoods: 'orderHistories.goods',
+                        orderBooksMainImg: 'orderBooks.mainImg',
+                        orderGoodsMainImg: 'orderGoods.mainImg',
+                        packageHistories: 'user.packageHistories',
+                        historyPackage: 'packageHistories.package',
+                        historyPackageMainImg: 'historyPackage.mainImg',
+                        packageSubscs: 'user.packageSubscs',
+                        gatheringHistories: 'user.gatheringHistories',
+                        historyGathering: 'gatheringHistories.gathering',
+                        historyGatheringMainImg: 'historyGathering.mainImg',
+                    },
+                },
+                order: { createdAt: 'DESC' },
+                skip: (req.page - 1) * req.offset,
+                take: req.offset,
+            });
+            // return OK status code and loaded users array
+            ctx.status = 200;
+            ctx.body = users;
+        }
     }
 
     public static async getUserCookie(ctx: any, next: any) {
@@ -95,7 +122,7 @@ export default class UserController {
             ctx.status = 200;
         }
     }
-    public static async createUser(ctx: any) {
+    public static async createUser(ctx: any, next: any) {
         // get a user repository to perform operations with user
         const userRepository: Repository<User> = getManager().getRepository(User);
         const addressRepository: Repository<Address> = getManager().getRepository(Address);
@@ -103,14 +130,17 @@ export default class UserController {
         const newUser: User = new User();
         const newAddress: Address = new Address();
 
+        console.log(ctx.request.newsLetter);
+
         newUser.userID = ctx.request.body.userID;
+        newUser.membership = '일반 회원';
         newUser.name = ctx.request.body.name;
         newUser.email = ctx.request.body.email;
         newUser.phone = ctx.request.body.phone;
         newUser.birth = ctx.request.body.birth;
         newUser.credit = 0;
         newUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
-        newUser.newsLetter = ctx.request.body.newsLetter ? true : false;
+        newUser.newsLetter = ctx.request.body.newsLetter === true ? true : false;
 
         newAddress.user = newUser;
         newAddress.name = '기본';
@@ -151,100 +181,125 @@ export default class UserController {
             });
             ctx.status = 201;
         }
+
+        await next();
+    }
+
+    public static async updateMembership(ctx: any) {
+        if (ctx.request.admin) {
+            const userRepository: Repository<User> = getManager().getRepository(User);
+            // load the user by id
+            const renewUser: any = await userRepository.findOne({
+                where: { id: ctx.request.body.id },
+            });
+
+            renewUser.membership = ctx.request.body.status;
+
+            const savedUser = await userRepository.save(renewUser);
+            if (savedUser) ctx.status = 200;
+        }
     }
 
     public static async updateUser(ctx: any) {
-        // get a user repository to perform operations with user
-        const userRepository: Repository<User> = getManager().getRepository(User);
-        const addressRepository: Repository<Address> = getManager().getRepository(Address);
-        // load the user by id
-        const renewUser: any = await userRepository.findOne({
-            join: {
-                alias: 'user',
-                leftJoinAndSelect: {
-                    address: 'user.address',
+        if (ctx.request.user) {
+            const userRepository: Repository<User> = getManager().getRepository(User);
+            const addressRepository: Repository<Address> = getManager().getRepository(Address);
+            // load the user by id
+            const renewUser: any = await userRepository.findOne({
+                join: {
+                    alias: 'user',
+                    leftJoinAndSelect: {
+                        address: 'user.address',
+                    },
                 },
-            },
-            where: { id: ctx.request.user.id },
-        });
+                where: { id: ctx.request.user.id },
+            });
 
-        const oldAddress: any = await addressRepository.findOne({
-            join: {
-                alias: 'address',
-                leftJoinAndSelect: {
-                    user: 'address.user',
+            const oldAddress: any = await addressRepository.findOne({
+                join: {
+                    alias: 'address',
+                    leftJoinAndSelect: {
+                        user: 'address.user',
+                    },
                 },
-            },
-            where: { userId: renewUser.id },
-        });
+                where: { userId: renewUser.id },
+            });
 
-        await addressRepository.remove(oldAddress);
-        const newAddress: Address = new Address();
-        // return a BAD REQUEST status code and error message if the user cannot be found
-        if (!renewUser) {
-            ctx.status = 400;
-            ctx.body = "The user you are trying to retrieve doesn't exist in the db";
-        }
-        if (ctx.request.body.password) {
-            renewUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
-        }
-
-        if (ctx.request.body.phone) {
-            renewUser.phone = ctx.request.body.phone;
-        }
-
-        if (ctx.request.body.birth) {
-            renewUser.birth = ctx.request.body.birth;
-        }
-
-        if (ctx.request.body.newsLetter !== undefined) {
-            renewUser.newsLetter = ctx.request.body.newsLetter;
-        }
-
-        if (ctx.request.body.zipCode && ctx.request.body.addressA && ctx.request.body.addressB) {
-            newAddress.user = renewUser;
-            newAddress.name = '기본';
-            newAddress.zip = ctx.request.body.zipCode;
-            newAddress.addressA = ctx.request.body.addressA;
-            newAddress.addressB = ctx.request.body.addressB;
-        }
-        // validate user entity
-        const errors: ValidationError[] = await validate(renewUser); // errors is an array of validation errors
-        if (errors.length > 0) {
-            // return BAD REQUEST status code and errors array
-            ctx.status = 400;
-            ctx.body = errors;
-        } else {
-            if (newAddress.user === renewUser) {
-                console.log('update address');
-                renewUser.address = [newAddress];
-                await addressRepository.save(newAddress);
-                await userRepository.save(renewUser);
-            } else {
-                console.log('solo save process');
-                await userRepository.save(renewUser);
+            await addressRepository.remove(oldAddress);
+            const newAddress: Address = new Address();
+            // return a BAD REQUEST status code and error message if the user cannot be found
+            if (!renewUser) {
+                ctx.status = 400;
+                ctx.body = "The user you are trying to retrieve doesn't exist in the db";
+            }
+            if (ctx.request.body.password) {
+                renewUser.hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
             }
 
-            // return CREATED status code and updated user
-            ctx.status = 201;
+            if (ctx.request.body.phone) {
+                renewUser.phone = ctx.request.body.phone;
+            }
+
+            if (ctx.request.body.birth) {
+                renewUser.birth = ctx.request.body.birth;
+            }
+
+            if (ctx.request.body.newsLetter !== undefined) {
+                renewUser.newsLetter = ctx.request.body.newsLetter;
+            }
+
+            if (
+                ctx.request.body.zipCode &&
+                ctx.request.body.addressA &&
+                ctx.request.body.addressB
+            ) {
+                newAddress.user = renewUser;
+                newAddress.name = '기본';
+                newAddress.zip = ctx.request.body.zipCode;
+                newAddress.addressA = ctx.request.body.addressA;
+                newAddress.addressB = ctx.request.body.addressB;
+            }
+            // validate user entity
+            const errors: ValidationError[] = await validate(renewUser); // errors is an array of validation errors
+            if (errors.length > 0) {
+                // return BAD REQUEST status code and errors array
+                ctx.status = 400;
+                ctx.body = errors;
+            } else {
+                if (newAddress.user === renewUser) {
+                    console.log('update address');
+                    renewUser.address = [newAddress];
+                    await addressRepository.save(newAddress);
+                    await userRepository.save(renewUser);
+                } else {
+                    console.log('solo save process');
+                    await userRepository.save(renewUser);
+                }
+
+                // return CREATED status code and updated user
+                ctx.status = 201;
+            }
         }
     }
+
     public static async deleteUser(ctx: any) {
-        // get a user repository to perform operations with user
-        const userRepository: Repository<User> = getManager().getRepository(User);
-        // load the user by id
-        const userToRemove: User | undefined = await userRepository.findOne(
-            ctx.request.body.userID,
-        );
-        if (!userToRemove) {
-            // return a BAD REQUEST status code and error message
-            ctx.status = 400;
-            ctx.body = "The user you are trying to delete doesn't exist in the db";
-        } else {
-            // the user is there so can be removed
-            await userRepository.remove(userToRemove);
-            // return a NO CONTENT status code
-            ctx.status = 204;
+        if (ctx.request.admin || ctx.request.user) {
+            // get a user repository to perform operations with user
+            const userRepository: Repository<User> = getManager().getRepository(User);
+            // load the user by id
+            const userToRemove: User | undefined = await userRepository.findOne(
+                ctx.request.body.userID,
+            );
+            if (!userToRemove) {
+                // return a BAD REQUEST status code and error message
+                ctx.status = 400;
+                ctx.body = "The user you are trying to delete doesn't exist in the db";
+            } else {
+                // the user is there so can be removed
+                await userRepository.remove(userToRemove);
+                // return a NO CONTENT status code
+                ctx.status = 204;
+            }
         }
     }
 
