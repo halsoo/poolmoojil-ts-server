@@ -196,7 +196,9 @@ export default class UserController {
             renewUser.membership = ctx.request.body.status;
 
             const savedUser = await userRepository.save(renewUser);
-            if (savedUser) ctx.status = 200;
+            if (savedUser) {
+                ctx.status = 200;
+            }
         }
     }
 

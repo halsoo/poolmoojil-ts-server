@@ -38,6 +38,7 @@ app.use(async (ctx: any, next: any) => {
     } else {
         path = og;
     }
+    console.log(path);
     if (REACT_ROUTER_PATH.includes(path)) {
         ctx.request.path = '/';
     }

@@ -14,6 +14,7 @@ export default class PlaceController {
                 .select('places')
                 .from(Place, 'places')
                 .leftJoinAndSelect('places.mainImg', 'images')
+                .orderBy('places.id', 'DESC')
                 .getMany();
 
             ctx.body = places;

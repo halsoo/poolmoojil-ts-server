@@ -7,7 +7,6 @@ LogRouter.get('/getuser/:id', UserController.getUser);
 LogRouter.get('/getbycookie', UserController.getUserCookie);
 LogRouter.get('/getemail/:email', UserController.getEmail);
 
-LogRouter.post('/:id', UserController.updateUser); //
 LogRouter.delete('/:id', UserController.deleteUser); //
 
 LogRouter.post('/updatemembership', UserController.updateMembership); //
