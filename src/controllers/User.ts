@@ -227,7 +227,7 @@ export default class UserController {
                 where: { userId: renewUser.id },
             });
 
-            await addressRepository.remove(oldAddress);
+            if (oldAddress) await addressRepository.remove(oldAddress);
             const newAddress: Address = new Address();
             // return a BAD REQUEST status code and error message if the user cannot be found
             if (!renewUser) {
