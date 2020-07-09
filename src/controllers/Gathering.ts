@@ -102,10 +102,12 @@ export default class GatheringController {
         });
 
         if (req.mainImg) {
-            const oldImage: any = await imageRepository.findOne({
-                where: { id: gathering.mainImg.id },
-            });
-            await imageRepository.remove(oldImage);
+            if (gathering.mainImg) {
+                const oldImage: any = await imageRepository.findOne({
+                    where: { id: gathering.mainImg.id },
+                });
+                await imageRepository.remove(oldImage);
+            }
 
             const mainImg = new Image();
             mainImg.name = req.mainImg.substring(65);
