@@ -1,5 +1,8 @@
 import { getManager, Repository, Like, Between } from 'typeorm';
 
+import moment from 'moment';
+import 'moment/locale/ko';
+
 import { Book } from '../models/Book';
 import { MonthlyCuration } from '../models/MonthlyCuration';
 import { Image } from '../models/Image';
@@ -194,12 +197,14 @@ export default class BookController {
                     await imageRepository.remove(oldAddImage);
                 }
 
-                const additionalImg = new Image();
-                additionalImg.name = req.additionalImg.substring(65);
-                additionalImg.link = req.additionalImg;
-                const newAdditionalImg = await imageRepository.save(additionalImg);
+                if (!req.additionalImg[0].id) {
+                    const additionalImg = new Image();
+                    additionalImg.name = req.additionalImg.substring(65);
+                    additionalImg.link = req.additionalImg;
+                    const newAdditionalImg = await imageRepository.save(additionalImg);
 
-                book.additionalImg = [newAdditionalImg];
+                    book.additionalImg = [newAdditionalImg];
+                }
             }
 
             if (req.monthlyCurations) {
@@ -302,39 +307,71 @@ export default class BookController {
 
         const req = ctx.request.body;
 
-        const calendar = new Date();
-        const month = calendar.getMonth() + 1;
-        const year = calendar.getFullYear();
+        // const calendar = new Date();
+        // const month = calendar.getMonth() + 1;
+        // const year = calendar.getFullYear();
 
-        let upperMonthStr = '';
-        if (month < 10) upperMonthStr = '0' + month.toString();
-        else upperMonthStr = month.toString();
+        // let upperMonthStr = '';
+        // if (month < 10) upperMonthStr = '0' + month.toString();
+        // else upperMonthStr = month.toString();
 
-        const upperDate = year.toString() + '-' + upperMonthStr + '-' + '01';
+        // const upperDate = year.toString() + '-' + upperMonthStr + '-' + '01';
 
-        let lowerMonthStr = '';
-        let lowerYear = 0;
-        let lowerMonth = 0;
+        // let lowerMonthStr = '';
+        // let lowerYear = 0;
+        // let lowerMonth = 0;
 
-        const offset = req.page * req.offset;
+        // const offset = req.page * req.offset;
 
-        const monthOffset = offset % 12;
-        const yearOffset = Math.floor(offset / 12);
+        // const monthOffset = offset % 12;
+        // const yearOffset = Math.floor(offset / 12);
 
-        lowerYear = year - yearOffset;
+        // lowerYear = year - yearOffset;
 
-        if (month - monthOffset < 1) {
-            lowerYear = lowerYear - 1;
-            lowerMonth = 12 + (month - monthOffset);
-        } else {
-            lowerMonth = month - monthOffset;
+        // if (month - monthOffset < 1) {
+        //     lowerYear = lowerYear - 1;
+        //     lowerMonth = 12 + (month - monthOffset);
+        // } else {
+        //     lowerMonth = month - monthOffset;
+        // }
+
+        // if (lowerMonth < 10) lowerMonthStr = '0' + lowerMonth.toString();
+        // else lowerMonthStr = lowerMonth.toString();
+
+        // const lowerDate = lowerYear.toString() + '-' + lowerMonthStr + '-' + '02';
+        // load user by id
+
+        const today = moment();
+        const dayNum = today.isoWeekday();
+
+        let diff = 0;
+
+        switch (dayNum) {
+            case 1:
+                diff = 0;
+                break;
+            case 2:
+                diff = 1;
+                break;
+            case 3:
+                diff = 2;
+                break;
+            case 4:
+                diff = 3;
+                break;
+            case 5:
+                diff = 4;
+                break;
+            case 6:
+                diff = 5;
+                break;
+            case 7:
+                diff = 6;
+                break;
         }
 
-        if (lowerMonth < 10) lowerMonthStr = '0' + lowerMonth.toString();
-        else lowerMonthStr = lowerMonth.toString();
+        const date = today.subtract(diff, 'days');
 
-        const lowerDate = lowerYear.toString() + '-' + lowerMonthStr + '-' + '02';
-        // load user by id
         const curation: MonthlyCuration[] = await curationRepository.find({
             join: {
                 alias: 'monthlyCuration',
@@ -345,7 +382,7 @@ export default class BookController {
             },
             order: { date: 'DESC' },
             where: {
-                date: Between(lowerDate, upperDate),
+                date: Between('2010-01-01', date.format('YYYY[-]MM[-]DD')),
             },
             skip: (req.page - 1) * req.offset,
             take: req.offset,
@@ -377,7 +414,7 @@ export default class BookController {
             },
             skip: (req.page - 1) * req.offset,
             take: req.offset,
-            where: { type: '풀무질 인문학 100선' },
+            where: { type: '베스트셀러' },
         });
 
         if (books) {
