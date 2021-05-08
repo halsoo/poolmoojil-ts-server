@@ -34,7 +34,7 @@
         "moment": "^2.26.0",
         "multer-s3": "^2.9.0",
         "pg": "^8.0.0",
-        "typeorm": "^0.2.24"
+        "typeorm": "^0.2.25"
     },
     "devDependencies": {
         "@types/koa": "^2.11.3",
